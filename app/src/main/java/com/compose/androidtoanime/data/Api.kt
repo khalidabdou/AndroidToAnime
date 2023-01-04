@@ -1,5 +1,6 @@
 package com.compose.androidtoanime.data.entities
 
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -7,12 +8,11 @@ import retrofit2.http.*
 
 interface Api {
 
-    @POST("/")
-    suspend fun sendPhotoFromBody(@Body photo: RequestBody): Response<String?>
+    @POST("/upload")
+    suspend fun sendPhotoFromBody(@Body image: MultipartBody.Part): Response<String?>
 
-    @GET("images")
-    suspend fun getImages(
-        @Query("language") language: Int = 3
+    @GET("/")
+    suspend fun test(
     ): Response<String?>?
 
 }

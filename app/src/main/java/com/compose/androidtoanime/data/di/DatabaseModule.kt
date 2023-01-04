@@ -16,7 +16,6 @@ import javax.inject.Singleton
 object DatabaseModule {
 
 
-
     @Singleton
     @Provides
     fun provideDataStoreRepository(

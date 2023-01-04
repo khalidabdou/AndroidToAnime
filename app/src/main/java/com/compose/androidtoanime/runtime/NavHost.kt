@@ -17,6 +17,9 @@ fun NavigationHost(navController: NavHostController,viewModel: ViewModel) {
         navController = navController,
         startDestination = NavRoutes.Splash.route,
     ) {
+        composable(NavRoutes.Splash.route) {
+            Upload(navController,viewModel)
+        }
 
         composable(NavRoutes.Upload.route) {
             Upload(navController,viewModel)

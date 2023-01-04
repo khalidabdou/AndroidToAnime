@@ -45,7 +45,7 @@ object NetworkModule {
     ): Retrofit {
 
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.api + "/")
+            .baseUrl(BuildConfig.api)
             .client(getUnsafeOkHttpClient())
             .addConverterFactory(gsonConverterFactory)
             .build()

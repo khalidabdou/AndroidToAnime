@@ -1,16 +1,19 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    id 'kotlin-android'
 }
 
 android {
     namespace 'com.compose.androidtoanime'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.to.anime"
-        minSdk 22
-        targetSdk 32
+        minSdk 23
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -36,7 +39,7 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
     buildFeatures {
         compose true
@@ -81,11 +84,17 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-messaging'
 
+    // Dagger - Hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation "com.squareup.okhttp3:logging-interceptor:4.5.0"
 
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
+
+    implementation("io.coil-kt:coil-compose:2.2.2")
 }
 

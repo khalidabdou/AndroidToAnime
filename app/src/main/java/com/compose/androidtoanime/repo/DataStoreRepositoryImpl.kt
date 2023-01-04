@@ -12,5 +12,4 @@ class RepositoryImpl @Inject constructor(
     val remote = remoteDataSource
     val dataStore = dataStore
 
-
 }
