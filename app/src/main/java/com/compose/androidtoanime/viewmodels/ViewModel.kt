@@ -105,9 +105,9 @@ class ViewModel @Inject constructor(
             val bytes = output.toByteArray()
             Log.d("tbCats", "output " + bytes)
             val buffer2 = generateRequestBody(bytes)
-            Log.d("tbCats", "buffer2 " + buffer2.get("images").toString())
+            Log.d("tbCats", "buffer2 " + buffer2.toString())
             //return@launch
-            val res = repo.remote.test(buffer2.get("images").toString())
+            val res = repo.remote.test(buffer2.toString())
             Log.d("tbCats", "res " + res.toString())
 
             return@launch

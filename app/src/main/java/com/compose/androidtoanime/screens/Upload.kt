@@ -85,7 +85,7 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                 Button(onClick = {
                     //viewModel.test()
                     val res: Resources = context.resources
-                    val drawableId: Int = R.drawable.placeholder  // the ID of the drawable resource
+                    val drawableId: Int = R.drawable.index  // the ID of the drawable resource
                     val drawable: Drawable = res.getDrawable(drawableId, null)
                     val bitmap: Bitmap = (drawable as BitmapDrawable).bitmap
                     val uri: Uri = getBitmapUri(context, bitmap)
