@@ -8,11 +8,13 @@ import retrofit2.http.*
 
 interface Api {
 
+    @Multipart
     @POST("/upload")
-    suspend fun sendPhotoFromBody(@Body image: MultipartBody.Part): Response<String?>
+    suspend fun sendPhotoFromBody(@Part files: MultipartBody.Part): Response<String?>
 
-    @GET("/")
+    @POST("trpc.shadow_cv.ai_processor_cgi.AIProcessorCgi/Process")
     suspend fun test(
-    ): Response<String?>?
+        @HeaderMap headers: Map<String, String>, @Body body: String
+    ): Response<Any?>?
 
 }

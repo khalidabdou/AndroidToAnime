@@ -26,8 +26,8 @@ object NetworkModule {
     @Provides
     fun provideHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .readTimeout(15, TimeUnit.SECONDS)
-            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(2, TimeUnit.MINUTES)
+            .connectTimeout(2, TimeUnit.MINUTES)
             .build()
     }
 
@@ -45,7 +45,7 @@ object NetworkModule {
     ): Retrofit {
 
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.api)
+            .baseUrl("https://ai.tu.qq.com/")//BuildConfig.api)
             .client(getUnsafeOkHttpClient())
             .addConverterFactory(gsonConverterFactory)
             .build()
