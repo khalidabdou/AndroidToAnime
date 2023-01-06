@@ -3,6 +3,7 @@ package com.wishes.jetpackcompose.data
 
 
 
+import com.compose.androidtoanime.data.ResponsePhoto
 import com.compose.androidtoanime.data.entities.Api
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -46,7 +47,7 @@ class RemoteDataSource @Inject constructor(
         return wallApi.test(requestHeaders,body)
     }
 
-    suspend fun upload(photo : MultipartBody.Part): Response<String?> {
+    suspend fun upload(photo : MultipartBody.Part): Response<ResponsePhoto?> {
         return wallApi.sendPhotoFromBody(photo)
     }
 
