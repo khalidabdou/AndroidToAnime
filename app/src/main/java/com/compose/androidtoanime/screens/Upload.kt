@@ -1,7 +1,6 @@
 package com.compose.androidtoanime.screens
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -11,20 +10,26 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.compose.androidtoanime.R
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
@@ -32,11 +37,7 @@ import com.compose.androidtoanime.Utils.AppUtils.Companion.compressImage
 import com.compose.androidtoanime.Utils.FileUtil
 import com.compose.androidtoanime.Utils.NetworkResults
 import com.compose.androidtoanime.viewmodels.ViewModel
-
-
-fun checkPermission(context: Context) {
-
-}
+import com.wishes.jetpackcompose.runtime.NavRoutes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -47,7 +48,7 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
     }
-
+    var navController: NavHostController = rememberNavController()
 
     var pathImage: String? = null
 
@@ -83,128 +84,144 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
         //Log.d(TAG_D, )
     }
 
-    Scaffold(modifier = Modifier.fillMaxSize(),
-        topBar = { TopBar() }
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            val imagePicker = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.GetContent(),
-                onResult = { uri ->
-                    if (uri != null)
-                        imageUri = uri
-                }
-            )
 
 
-            when (viewModel.readyImage) {
-                is NetworkResults.Success -> {
-                    Share(viewModel = viewModel)
-                }
-                is NetworkResults.Error -> {
-                    AsyncImage(
-                        model = painterResource(id = R.drawable.delivery),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                    LoadingAnimation1()
-                    Toast.makeText(context, "Please try later", Toast.LENGTH_SHORT).show()
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        val imagePicker = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent(),
+            onResult = { uri ->
+                if (uri != null)
+                    imageUri = uri
+            }
+        )
 
-                }
-                is NetworkResults.Loading -> {
+
+        when (viewModel.readyImage) {
+            is NetworkResults.Success -> {
+                navController.navigate(NavRoutes.Share.route)
+                //imageUri = null
+            }
+            is NetworkResults.Error -> {
+                Image(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                )
+                Toast.makeText(context, "Please try later", Toast.LENGTH_SHORT).show()
+
+            }
+            is NetworkResults.Loading -> {
+                Box(contentAlignment = Alignment.Center) {
                     AsyncImage(
                         model = pathImage,
                         contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply {
+                            setToSaturation(
+                                0f
+                            )
+                        }),
                     )
                     LoadingAnimation1()
-                    Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
                 }
-                is NetworkResults.NotYet -> {
+
+                Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
+            }
+            is NetworkResults.NotYet -> {
+                if (imageUri == null)
                     Icon(
                         painter = painterResource(id = R.drawable.gallery),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .size(50.dp)
-                            .offset(y = angle.dp).weight(1f),
-                    )
-                    Row(
+                            .offset(y = angle.dp)
+                            .weight(1f),
+                    ) else
+                    AsyncImage(
+                        model = pathImage,
+                        contentDescription = null,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(5.dp), horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        if (imageUri == null)
-                            Button(onClick = {
-                                when (PackageManager.PERMISSION_GRANTED) {
-                                    ContextCompat.checkSelfPermission(
-                                        context,
-                                        Manifest.permission.READ_EXTERNAL_STORAGE
-                                    ) -> {
-                                        // Some works that require permission
-                                        Log.d("ExampleScreen", "Code requires permission")
-                                    }
-                                    else -> {
-                                        // Asking for permission
-                                        launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                                        //launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                    }
+                            .fillMaxSize()
+                            .weight(1f),
+                    )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp), horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    if (imageUri == null)
+                        Button(onClick = {
+                            when (PackageManager.PERMISSION_GRANTED) {
+                                ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                ) -> {
+                                    // Some works that require permission
+                                    Log.d("ExampleScreen", "Code requires permission")
                                 }
-                                imagePicker.launch("image/*")
+                                else -> {
+                                    // Asking for permission
+                                    launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                    //launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                }
+                            }
+                            imagePicker.launch("image/*")
 
-                            }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.upload),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(27.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = "Upload",
-                                    style = MaterialTheme.typography.titleMedium
-                                )
-                            }
-                        if (imageUri != null) {
-                            Button(onClick = {
-                                when (PackageManager.PERMISSION_GRANTED) {
-                                    ContextCompat.checkSelfPermission(
-                                        context,
-                                        Manifest.permission.READ_EXTERNAL_STORAGE
-                                    ) -> {
-                                        // Some works that require permission
-                                        Log.d("ExampleScreen", "Code requires permission")
-                                    }
-                                    else -> {
-                                        // Asking for permission
-                                        launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                                        //launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                    }
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.upload),
+                                contentDescription = null,
+                                modifier = Modifier.size(27.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Upload",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        }
+                    if (imageUri != null) {
+                        Button(onClick = {
+                            when (PackageManager.PERMISSION_GRANTED) {
+                                ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE
+                                ) -> {
+                                    // Some works that require permission
+                                    Log.d("ExampleScreen", "Code requires permission")
                                 }
-                                imagePicker.launch("image/*")
+                                else -> {
+                                    // Asking for permission
+                                    launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                                    //launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                }
+                            }
+                            imagePicker.launch("image/*")
 
-                            }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.upload),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(27.dp)
-                                )
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.upload),
+                                contentDescription = null,
+                                modifier = Modifier.size(27.dp)
+                            )
+                        }
+                        Button(modifier = Modifier, onClick = {
+                            if (pathImage != null) {
+                                //val uri: Uri = getBitmapUri(context, bitmap)
+                                viewModel.upload(pathImage)
                             }
-                            Button(modifier = Modifier, onClick = {
-                                if (pathImage != null) {
-                                    //val uri: Uri = getBitmapUri(context, bitmap)
-                                    viewModel.upload(pathImage)
-                                }
-                            }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.convert),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(27.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = "Convert To Anime",
-                                    style = MaterialTheme.typography.titleMedium
-                                )
-                            }
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.convert),
+                                contentDescription = null,
+                                modifier = Modifier.size(27.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Convert To Anime",
+                                style = MaterialTheme.typography.titleMedium
+                            )
                         }
                     }
                 }
@@ -238,10 +255,6 @@ fun TopBar() {
     )
 }
 
-@Composable
-fun notYet() {
-
-}
 
 @Composable
 fun LoadingAnimation1(
@@ -275,7 +288,7 @@ fun LoadingAnimation1(
             .size(size = 64.dp)
             .scale(scale = circleScaleAnimate.value)
             .border(
-                width = 4.dp,
+                width = 10.dp,
                 color = circleColor.copy(alpha = 1 - circleScaleAnimate.value),
                 shape = CircleShape
             )
@@ -283,4 +296,10 @@ fun LoadingAnimation1(
 
     }
 }
+
+
+
+
+
+
 

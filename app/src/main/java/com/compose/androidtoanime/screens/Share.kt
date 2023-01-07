@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.compose.androidtoanime.BuildConfig
 import com.compose.androidtoanime.R
@@ -24,7 +23,9 @@ fun Share(viewModel: ViewModel) {
         AsyncImage(
             model = url,
             contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f),
             //contentScale = ContentScale.Crop
         )
         Row(
@@ -50,7 +51,7 @@ fun Share(viewModel: ViewModel) {
 }
 
 @Composable
-fun MyButton(text: String, painter: Painter, onClick: () -> Unit) {
+fun MyButton(text: String?, painter: Painter, onClick: () -> Unit) {
     Button(onClick = {
         onClick()
     }) {
@@ -60,9 +61,10 @@ fun MyButton(text: String, painter: Painter, onClick: () -> Unit) {
             modifier = Modifier.size(27.dp)
         )
         Spacer(modifier = Modifier.width(6.dp))
-        Text(
-            text = text,
-            style = MaterialTheme.typography.titleMedium
-        )
+        if (text != null)
+            Text(
+                text = text,
+                style = MaterialTheme.typography.titleMedium
+            )
     }
 }

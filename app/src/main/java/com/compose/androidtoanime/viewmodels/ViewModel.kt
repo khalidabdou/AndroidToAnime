@@ -67,9 +67,19 @@ class ViewModel @Inject constructor(
 //            Log.d(TAG_D, "path ${filePath} +${columnIndex}")
 
         //val file1:File=File(path.replace())
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH) + 1
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+        val second = calendar.get(Calendar.SECOND)
+
+        // Concatenate the date and time values into a string.
+        val fileName = "$year-$month-$day-$hour-$minute-$second.jpeg"
         val currentTime = Calendar.getInstance().time
         val randomNumber = Random.nextInt()
-        val fileName = "FileNameData-${currentTime.time}-$randomNumber.jpeg"
+        //val fileName = "FileNameDataaa-${currentTime.time}-$randomNumber.jpeg"
 
         //Log.d(TAG_D, path.split(File.separator).last())
         val newpath = path.replace(path.split(File.separator).last(), fileName)
