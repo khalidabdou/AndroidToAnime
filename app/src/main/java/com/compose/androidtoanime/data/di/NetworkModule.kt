@@ -28,8 +28,8 @@ object NetworkModule {
         return OkHttpClient.Builder()
             .callTimeout(1, TimeUnit.MINUTES)
             .connectTimeout(1, TimeUnit.MINUTES)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(1, TimeUnit.MINUTES)
+            .writeTimeout(1, TimeUnit.MINUTES)
             .build()
     }
 
@@ -48,7 +48,7 @@ object NetworkModule {
 
         return Retrofit.Builder()
             .baseUrl(BuildConfig.api)
-            .client(getUnsafeOkHttpClient())
+            .client(okHttpClient)
             .addConverterFactory(gsonConverterFactory)
             .build()
     }

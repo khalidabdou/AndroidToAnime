@@ -8,6 +8,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +17,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.compose.androidtoanime.RepositoryImpl
+import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_D
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
 import com.compose.androidtoanime.Utils.AppUtils.Companion.saveBitmapToFile
 import com.compose.androidtoanime.Utils.HandleResponse
@@ -28,8 +30,10 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import java.nio.file.Files
 import java.util.*
 import javax.inject.Inject
+import kotlin.random.Random
 
 
 @HiltViewModel
@@ -40,14 +44,14 @@ class ViewModel @Inject constructor(
 
 ) : AndroidViewModel(application) {
 
-    var uploadResults: MutableLiveData<NetworkResults<ResponsePhoto>> =
-        MutableLiveData(NetworkResults.Loading())
-    var readyImage by mutableStateOf<NetworkResults<ResponsePhoto>?>(null)
+
+    var readyImage by mutableStateOf<NetworkResults<ResponsePhoto>?>(NetworkResults.NotYet())
 
 
     var test: MutableLiveData<NetworkResults<String>> = MutableLiveData()
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("Recycle")
     fun upload(path: String) = viewModelScope.launch {
         //val file = File(uri.path!!)
@@ -61,8 +65,24 @@ class ViewModel @Inject constructor(
 //            val filePath = cursor.getString(columnIndex)
 //            Log.d(TAG_D, "path ====")
 //            Log.d(TAG_D, "path ${filePath} +${columnIndex}")
-        val file = saveBitmapToFile(bitmap, File(path))
 
+        //val file1:File=File(path.replace())
+        val currentTime = Calendar.getInstance().time
+        val randomNumber = Random.nextInt()
+        val fileName = "FileNameData-${currentTime.time}-$randomNumber.jpeg"
+
+        //Log.d(TAG_D, path.split(File.separator).last())
+        val newpath = path.replace(path.split(File.separator).last(), fileName)
+        var file2 = File(path)
+        //file2.copyTo(file1,true,true)
+        //var fileTemp= File()
+        val fileTemp = File(newpath)
+        Files.createFile(fileTemp.toPath())
+
+        //return@launch
+        val file = saveBitmapToFile(bitmap, fileTemp)
+
+        readyImage = NetworkResults.Loading()
         val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file!!)
         val body = MultipartBody.Part.createFormData("file", file!!.name, requestFile)
         val res = repo.remote.upload(body)

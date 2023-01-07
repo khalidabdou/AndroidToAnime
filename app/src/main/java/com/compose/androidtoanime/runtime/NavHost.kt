@@ -26,7 +26,7 @@ fun NavigationHost(navController: NavHostController,viewModel: ViewModel) {
         }
 
         composable(NavRoutes.Share.route) {
-            Share(navController,viewModel)
+            Share(viewModel)
         }
     }
 }
