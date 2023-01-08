@@ -1,5 +1,7 @@
 package com.compose.androidtoanime.screens
 
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -8,18 +10,29 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.compose.androidtoanime.BuildConfig
 import com.compose.androidtoanime.R
+import com.compose.androidtoanime.Utils.AppUtils.Companion.saveImage
+import com.compose.androidtoanime.Utils.AppUtils.Companion.sharePalette
+import com.compose.androidtoanime.Utils.AppUtils.Companion.toBitmap
 import com.compose.androidtoanime.viewmodels.ViewModel
+import java.util.concurrent.Executors
 
 @Composable
 fun Share(viewModel: ViewModel) {
+
+    val data = viewModel.readyImage!!.data
+    val url = BuildConfig.api + data?.folder + "crop" + data?.filename
+    val context= LocalContext.current
+
+    val myExecutor = Executors.newSingleThreadExecutor()
+    val myHandler = Handler(Looper.getMainLooper())
     Column() {
-        val data = viewModel.readyImage!!.data
-        val url = BuildConfig.api + data?.folder + "crop" + data?.filename
+
         AsyncImage(
             model = url,
             contentDescription = null,
@@ -38,13 +51,31 @@ fun Share(viewModel: ViewModel) {
                 text = "Share",
                 painter = painterResource(id = R.drawable.ic_share)
             ) {
+                myExecutor.execute {
+                    val mImage = toBitmap(context,url)
+                    myHandler.post {
+                        //mImageView.setImageBitmap(mImage)
+                        if(mImage!=null){
+                            sharePalette(context,mImage)
+                        }
+                    }
+                }
 
             }
             MyButton(
                 text = "Download",
                 painter = painterResource(id = R.drawable.ic_download)
             ) {
-
+                myExecutor.execute {
+                    val mImage = toBitmap(context,url)
+                    myHandler.post {
+                        //mImageView.setImageBitmap(mImage)
+                        if(mImage!=null){
+                            saveImage(context,mImage)
+                        }
+                    }
+                }
+                //saveImage(context = context, toBitmap(context,url))
             }
         }
     }

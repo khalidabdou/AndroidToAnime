@@ -1,17 +1,20 @@
 package com.compose.androidtoanime.screens
 
 import android.Manifest
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -26,10 +29,10 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.compose.androidtoanime.R
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
@@ -37,7 +40,6 @@ import com.compose.androidtoanime.Utils.AppUtils.Companion.compressImage
 import com.compose.androidtoanime.Utils.FileUtil
 import com.compose.androidtoanime.Utils.NetworkResults
 import com.compose.androidtoanime.viewmodels.ViewModel
-import com.wishes.jetpackcompose.runtime.NavRoutes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -48,7 +50,6 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
     }
-    var navController: NavHostController = rememberNavController()
 
     var pathImage: String? = null
 
@@ -66,6 +67,8 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
     }
 
 
+
+
     val infiniteTransition = rememberInfiniteTransition()
     val angle by infiniteTransition.animateFloat(
         initialValue = 0F,
@@ -77,6 +80,8 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
     )
 
 
+
+
     if (imageUri != null) {
         pathImage = FileUtil(context).getPath(imageUri!!)
         bitmap = pathImage?.let { compressImage(it) }!!
@@ -84,6 +89,19 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
         //Log.d(TAG_D, )
     }
 
+    BackHandler() {
+        if (viewModel.readyImage is NetworkResults.Loading){
+            Toast.makeText(context,"Please Wait for result",Toast.LENGTH_SHORT).show()
+            return@BackHandler
+        }
+        if (viewModel.readyImage !is NetworkResults.NotYet){
+            //imageUri=null
+            viewModel.readyImage = NetworkResults.NotYet()
+        }
+
+        else
+            (context as Activity).finish()
+    }
 
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -95,11 +113,9 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
             }
         )
 
-
         when (viewModel.readyImage) {
             is NetworkResults.Success -> {
-                navController.navigate(NavRoutes.Share.route)
-                //imageUri = null
+                Share(viewModel = viewModel)
             }
             is NetworkResults.Error -> {
                 Image(
@@ -232,10 +248,10 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
 }
 
 @Composable
-fun TopBar() {
+fun TopBar(open:()->Unit) {
     SmallTopAppBar(
         title = {
-            Text(text = "To Anime")
+            Text(text = stringResource(id = R.string.app_name))
         },
         navigationIcon = {},
         actions = {
@@ -246,6 +262,9 @@ fun TopBar() {
                 modifier = Modifier
                     .size(30.dp)
                     .padding(2.dp)
+                    .clickable {
+                        open()
+                    }
             )
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(
@@ -257,7 +276,7 @@ fun TopBar() {
 
 
 @Composable
-fun LoadingAnimation1(
+fun  LoadingAnimation1(
     circleColor: Color = Color.Magenta,
     animationDelay: Int = 1000
 ) {

@@ -1,21 +1,31 @@
 package com.compose.androidtoanime.Utils
 
 import android.content.ContentResolver
+import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
+import java.io.*
+import java.net.HttpURLConnection
+import java.net.MalformedURLException
+import java.net.URL
+import java.util.*
+
 
 class AppUtils {
 
     companion object {
         val TAG_D = "debug_response"
+        const val TABLE_IMAGE="table_photos"
+        const val DATABASE_NAME="db_name"
         lateinit var bitmap: Bitmap
 
 
@@ -81,6 +91,83 @@ class AppUtils {
             // Return the compressed image
             return BitmapFactory.decodeByteArray(imageData, 0, imageData.size)
         }
+        fun generateNewPath():String{
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH) + 1
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+            val hour = calendar.get(Calendar.HOUR_OF_DAY)
+            val minute = calendar.get(Calendar.MINUTE)
+            val second = calendar.get(Calendar.SECOND)
+            return "$year-$month-$day-$hour-$minute-$second"
+        }
+
+
+        fun saveImage(context: Context,bitmap: Bitmap?) {
+            val filename = "${System.currentTimeMillis()}.jpg"
+            var fos: OutputStream? = null
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                context.contentResolver?.also { resolver ->
+                    val contentValues = ContentValues().apply {
+                        put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+                        put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+                        put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                    }
+                    val imageUri: Uri? = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                    fos = imageUri?.let { resolver.openOutputStream(it) }
+                }
+            } else {
+                val imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                val image = File(imagesDir, filename)
+                fos = FileOutputStream(image)
+            }
+            fos?.use {
+                bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, it)
+                Toast.makeText(context , "Saved to Gallery" , Toast.LENGTH_SHORT).show()
+            }
+        }
+
+         fun toBitmap(context: Context,string: String): Bitmap? {
+            val url: URL = mStringToURL(string)!!
+            val connection: HttpURLConnection?
+            try {
+                connection = url.openConnection() as HttpURLConnection
+                connection.connect()
+                val inputStream: InputStream = connection.inputStream
+                val bufferedInputStream = BufferedInputStream(inputStream)
+                return BitmapFactory.decodeStream(bufferedInputStream)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
+            }
+            return null
+        }
+         fun mStringToURL(string: String): URL? {
+            try {
+                return URL(string)
+            } catch (e: MalformedURLException) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
+        fun sharePalette(context: Context,bitmap: Bitmap) {
+            val bitmapPath = MediaStore.Images.Media.insertImage(
+                context.contentResolver,
+                bitmap,
+                "palette",
+                "share palette"
+            )
+            val bitmapUri = Uri.parse(bitmapPath)
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "image/png"
+            intent.putExtra(Intent.EXTRA_STREAM, bitmapUri)
+            context.startActivity(Intent.createChooser(intent, "Share"))
+        }
+
+
 
     }
+
+
 }

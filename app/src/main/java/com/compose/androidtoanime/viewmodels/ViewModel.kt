@@ -3,12 +3,7 @@ package com.compose.androidtoanime.viewmodels
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
-import android.database.Cursor
-import android.net.Uri
 import android.os.Build
-import android.provider.MediaStore
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,14 +12,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.compose.androidtoanime.RepositoryImpl
-import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_D
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
+import com.compose.androidtoanime.Utils.AppUtils.Companion.generateNewPath
 import com.compose.androidtoanime.Utils.AppUtils.Companion.saveBitmapToFile
 import com.compose.androidtoanime.Utils.HandleResponse
 import com.compose.androidtoanime.Utils.NetworkResults
 import com.compose.androidtoanime.data.ResponsePhoto
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -44,10 +39,8 @@ class ViewModel @Inject constructor(
 
 ) : AndroidViewModel(application) {
 
-
+    var myPhotos by mutableStateOf(emptyList<ResponsePhoto>())
     var readyImage by mutableStateOf<NetworkResults<ResponsePhoto>?>(NetworkResults.NotYet())
-
-
     var test: MutableLiveData<NetworkResults<String>> = MutableLiveData()
 
 
@@ -67,16 +60,10 @@ class ViewModel @Inject constructor(
 //            Log.d(TAG_D, "path ${filePath} +${columnIndex}")
 
         //val file1:File=File(path.replace())
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH) + 1
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        val minute = calendar.get(Calendar.MINUTE)
-        val second = calendar.get(Calendar.SECOND)
+
 
         // Concatenate the date and time values into a string.
-        val fileName = "$year-$month-$day-$hour-$minute-$second.jpeg"
+        val fileName = "${generateNewPath()}+.jpeg"
         val currentTime = Calendar.getInstance().time
         val randomNumber = Random.nextInt()
         //val fileName = "FileNameDataaa-${currentTime.time}-$randomNumber.jpeg"
@@ -97,37 +84,23 @@ class ViewModel @Inject constructor(
         val body = MultipartBody.Part.createFormData("file", file!!.name, requestFile)
         val res = repo.remote.upload(body)
         readyImage = HandleResponse(res).handleResult()
+        if (readyImage is NetworkResults.Success){
+            if (readyImage!=null && (readyImage as NetworkResults.Success<ResponsePhoto>).data!=null)
+            insertPhoto(readyImage!!.data!!)
+        }
         //}
 
 
     }
 
-    fun getRealPathFromURI(context: Context, contentUri: Uri): String {
-        var cursor: Cursor? = null
-        return try {
-            val proj = arrayOf(MediaStore.Images.Media.DATA)
-            cursor = context.contentResolver.query(contentUri, proj, null, null, null)
-            val columnIndex = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-            cursor.moveToFirst()
-            cursor.getString(columnIndex)
-        } finally {
-            cursor?.close()
+    fun getPhotos() = viewModelScope.launch(Dispatchers.IO) {
+        repo.localData.getPhotos().collect {
+            myPhotos = it
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun generateRequestBody(image: ByteArray): Map<String, Any> {
-
-        val busiId = "different_dimension_me_img_entry"
-        val extraDict = mapOf("version" to 2)
-        val gson = Gson()
-        val encodedImage = Base64.getEncoder().encodeToString(image)
-
-        return mapOf(
-            "busiId" to busiId,
-            "extra" to gson.toJson(extraDict),
-            "images" to listOf(encodedImage)
-        )
+    private fun insertPhoto(photo: ResponsePhoto) = viewModelScope.launch {
+        repo.localData.insertPhoto(photo)
     }
 
 

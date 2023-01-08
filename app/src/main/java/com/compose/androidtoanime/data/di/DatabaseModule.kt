@@ -1,6 +1,7 @@
 package com.compose.androidtoanime.data.di
 
 import android.content.Context
+import com.compose.androidtoanime.data.roomDatabase
 import com.compose.androidtoanime.preferences.implimentation.DataStoreRepositoryImpl
 
 import dagger.Module
@@ -14,6 +15,15 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
+
+
+    @Singleton
+    @Provides
+    fun provideDatabase(@ApplicationContext context: Context) = roomDatabase.getDatabase(context)
+
+    @Singleton
+    @Provides
+    fun provideDao(database: roomDatabase) = database.dao()
 
 
     @Singleton

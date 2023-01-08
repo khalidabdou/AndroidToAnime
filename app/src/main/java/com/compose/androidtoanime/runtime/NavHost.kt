@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.compose.androidtoanime.screens.MyPhotos
 import com.compose.androidtoanime.screens.Share
 import com.compose.androidtoanime.screens.Upload
 import com.compose.androidtoanime.viewmodels.ViewModel
@@ -27,6 +28,10 @@ fun NavigationHost(navController: NavHostController,viewModel: ViewModel) {
 
         composable(NavRoutes.Share.route) {
             Share(viewModel)
+        }
+
+        composable(NavRoutes.MyPhotos.route) {
+            MyPhotos(viewModel)
         }
     }
 }
