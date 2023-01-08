@@ -11,9 +11,8 @@ import com.compose.androidtoanime.Utils.AppUtils.Companion.DATABASE_NAME
 @Database(
     entities = [
         ResponsePhoto::class,
-
     ],
-    version = 16,
+    version = 1,
     exportSchema = false
 )
 

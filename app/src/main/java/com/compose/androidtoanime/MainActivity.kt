@@ -20,15 +20,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
-import com.compose.androidtoanime.screens.TopBar
 import com.compose.androidtoanime.ui.theme.AndroidToAnimeTheme
 import com.compose.androidtoanime.viewmodels.ViewModel
+import com.wishes.jetpackcompose.runtime.NavRoutes
 import com.wishes.jetpackcompose.runtime.NavigationHost
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,30 +44,66 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 val viewModel: ViewModel = hiltViewModel()
                 val navController = rememberNavController()
-                val openPremiumDialog = remember {
-                    mutableStateOf(false)
-                }
+
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
-                        TopBar() {
-                            openPremiumDialog.value = true
+                        TopBar(myphoto = {
+                            navController.navigate(NavRoutes.MyPhotos.route)
+                        }) {
+                            viewModel.openPremium = true
                         }
                     },
 
                     ) {
                     NavigationHost(navController, viewModel)
-
                 }
-                if (openPremiumDialog.value)
+                if (viewModel.openPremium)
                     Premium() {
-                        openPremiumDialog.value = false
+                        viewModel.openPremium = false
                     }
             }
         }
     }
 }
 
+@Composable
+fun TopBar(myphoto:()->Unit,open:()->Unit) {
+    SmallTopAppBar(
+        title = {
+            Text(text = stringResource(id = R.string.app_name))
+        },
+        navigationIcon = {},
+        actions = {
+            Icon(
+                painter = painterResource(id = R.drawable.premium),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .size(30.dp)
+                    .padding(2.dp)
+                    .clickable {
+                        open()
+                    }
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.image),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .size(30.dp)
+                    .padding(4.dp)
+                    .clickable {
+                        myphoto()
+                    }
+            )
+        },
+        colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary
+        )
+    )
+}
 
 @Composable
 fun Premium(close: () -> Unit) {

@@ -14,7 +14,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -29,14 +28,15 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.compose.androidtoanime.R
+import com.compose.androidtoanime.Utils.AppUtils.Companion.MAX_PHOTO
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
 import com.compose.androidtoanime.Utils.AppUtils.Companion.compressImage
+import com.compose.androidtoanime.Utils.AppUtils.Companion.hasStoragePermission
 import com.compose.androidtoanime.Utils.FileUtil
 import com.compose.androidtoanime.Utils.NetworkResults
 import com.compose.androidtoanime.viewmodels.ViewModel
@@ -66,7 +66,9 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
         }
     }
 
-
+    LaunchedEffect(viewModel.getPhotos()) {
+        viewModel.getPhotos()
+    }
 
 
     val infiniteTransition = rememberInfiniteTransition()
@@ -83,23 +85,25 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
 
 
     if (imageUri != null) {
-        pathImage = FileUtil(context).getPath(imageUri!!)
-        bitmap = pathImage?.let { compressImage(it) }!!
+        if (hasStoragePermission(context)) {
+            pathImage = FileUtil(context).getPath(imageUri!!)
+            bitmap = pathImage?.let { compressImage(it) }!!
+        } else
+            Toast.makeText(context, "storage permission needed", Toast.LENGTH_SHORT).show()
+
         //pathImage = queryImage(context = context, uri = getUri)
         //Log.d(TAG_D, )
     }
 
     BackHandler() {
-        if (viewModel.readyImage is NetworkResults.Loading){
-            Toast.makeText(context,"Please Wait for result",Toast.LENGTH_SHORT).show()
+        if (viewModel.readyImage is NetworkResults.Loading) {
+            Toast.makeText(context, "Please Wait for result", Toast.LENGTH_SHORT).show()
             return@BackHandler
         }
-        if (viewModel.readyImage !is NetworkResults.NotYet){
+        if (viewModel.readyImage !is NetworkResults.NotYet) {
             //imageUri=null
             viewModel.readyImage = NetworkResults.NotYet()
-        }
-
-        else
+        } else
             (context as Activity).finish()
     }
 
@@ -169,21 +173,12 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                 ) {
                     if (imageUri == null)
                         Button(onClick = {
-                            when (PackageManager.PERMISSION_GRANTED) {
-                                ContextCompat.checkSelfPermission(
-                                    context,
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                                ) -> {
-                                    // Some works that require permission
-                                    Log.d("ExampleScreen", "Code requires permission")
-                                }
-                                else -> {
-                                    // Asking for permission
-                                    launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                    //launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                }
+                            if (hasStoragePermission(context)) {
+                                imagePicker.launch("image/*")
+                            } else{
+                                Toast.makeText(context, "storage permission needed", Toast.LENGTH_SHORT).show()
+                                launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
                             }
-                            imagePicker.launch("image/*")
 
                         }) {
                             Icon(
@@ -199,21 +194,14 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                         }
                     if (imageUri != null) {
                         Button(onClick = {
-                            when (PackageManager.PERMISSION_GRANTED) {
-                                ContextCompat.checkSelfPermission(
-                                    context,
-                                    Manifest.permission.READ_EXTERNAL_STORAGE
-                                ) -> {
-                                    // Some works that require permission
-                                    Log.d("ExampleScreen", "Code requires permission")
-                                }
-                                else -> {
-                                    // Asking for permission
-                                    launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                                    //launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                }
+                            if (hasStoragePermission(context)) {
+                                imagePicker.launch("image/*")
+                            } else{
+                                Toast.makeText(context, "storage permission needed", Toast.LENGTH_SHORT).show()
+                                launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
                             }
-                            imagePicker.launch("image/*")
+
+
 
                         }) {
                             Icon(
@@ -224,8 +212,10 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                         }
                         Button(modifier = Modifier, onClick = {
                             if (pathImage != null) {
-                                //val uri: Uri = getBitmapUri(context, bitmap)
-                                viewModel.upload(pathImage)
+                                if (viewModel.myPhotos.size > MAX_PHOTO) {
+                                    viewModel.openPremium = true
+                                } else
+                                    viewModel.upload(pathImage)
                             }
                         }) {
                             Icon(
@@ -247,36 +237,9 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
 
 }
 
-@Composable
-fun TopBar(open:()->Unit) {
-    SmallTopAppBar(
-        title = {
-            Text(text = stringResource(id = R.string.app_name))
-        },
-        navigationIcon = {},
-        actions = {
-            Icon(
-                painter = painterResource(id = R.drawable.premium),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier
-                    .size(30.dp)
-                    .padding(2.dp)
-                    .clickable {
-                        open()
-                    }
-            )
-        },
-        colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary
-        )
-    )
-}
-
 
 @Composable
-fun  LoadingAnimation1(
+fun LoadingAnimation1(
     circleColor: Color = Color.Magenta,
     animationDelay: Int = 1000
 ) {

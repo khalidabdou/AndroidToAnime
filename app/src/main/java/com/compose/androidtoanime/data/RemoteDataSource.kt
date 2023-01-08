@@ -21,4 +21,7 @@ class RemoteDataSource @Inject constructor(
     }
 
 
+    suspend fun getAds()=wallApi.getAds()
+
+
 }
