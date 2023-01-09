@@ -2,7 +2,6 @@ package com.compose.androidtoanime.screens
 
 import android.Manifest
 import android.app.Activity
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.util.Log
@@ -12,12 +11,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,8 +24,9 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.compose.androidtoanime.R
@@ -51,6 +48,14 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
         mutableStateOf<Uri?>(null)
     }
 
+
+    var openPermission by remember {
+        if (hasStoragePermission(context))
+            mutableStateOf(false)
+        else mutableStateOf(true)
+    }
+
+
     var pathImage: String? = null
 
     val launcher = rememberLauncherForActivityResult(
@@ -59,15 +64,18 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
         if (isGranted) {
             // Permission Accepted: Do something
             Log.d("ExampleScreen", "PERMISSION GRANTED")
+            openPermission = false
 
         } else {
             // Permission Denied: Do something
+            openPermission = true
             Log.d("ExampleScreen", "PERMISSION DENIED")
         }
     }
 
-    LaunchedEffect(viewModel.getPhotos()) {
+    LaunchedEffect(Unit) {
         viewModel.getPhotos()
+        //viewModel.getAds()
     }
 
 
@@ -89,7 +97,7 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
             pathImage = FileUtil(context).getPath(imageUri!!)
             bitmap = pathImage?.let { compressImage(it) }!!
         } else
-            Toast.makeText(context, "storage permission needed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "try again", Toast.LENGTH_SHORT).show()
 
         //pathImage = queryImage(context = context, uri = getUri)
         //Log.d(TAG_D, )
@@ -122,14 +130,11 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                 Share(viewModel = viewModel)
             }
             is NetworkResults.Error -> {
-                Image(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                )
-                Toast.makeText(context, "Please try later", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Error: Please try later", Toast.LENGTH_SHORT).show()
+                viewModel.readyImage = NetworkResults.NotYet()
 
             }
+
             is NetworkResults.Loading -> {
                 Box(contentAlignment = Alignment.Center) {
                     AsyncImage(
@@ -145,10 +150,13 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                     )
                     LoadingAnimation1()
                 }
-
                 Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
             }
             is NetworkResults.NotYet -> {
+                if (openPermission)
+                    Permission {
+                        launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    }
                 if (imageUri == null)
                     Icon(
                         painter = painterResource(id = R.drawable.gallery),
@@ -173,12 +181,10 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                 ) {
                     if (imageUri == null)
                         Button(onClick = {
-                            if (hasStoragePermission(context)) {
-                                imagePicker.launch("image/*")
-                            } else{
-                                Toast.makeText(context, "storage permission needed", Toast.LENGTH_SHORT).show()
-                                launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                            }
+                            imagePicker.launch("image/*")
+                            if (!hasStoragePermission(context))
+                                launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
 
                         }) {
                             Icon(
@@ -196,11 +202,14 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                         Button(onClick = {
                             if (hasStoragePermission(context)) {
                                 imagePicker.launch("image/*")
-                            } else{
-                                Toast.makeText(context, "storage permission needed", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "storage permission needed",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
                             }
-
 
 
                         }) {
@@ -277,6 +286,27 @@ fun LoadingAnimation1(
     ) {
 
     }
+}
+
+@Composable
+fun Permission(onConfirm: () -> Unit) {
+    AlertDialog(onDismissRequest = {},
+        title = {},
+        text = {
+            Text(
+                text = stringResource(R.string.needed_permission),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
+        },
+        confirmButton = {
+            Button(onClick = {
+                onConfirm()
+            }) {
+                Text(text = "Agree")
+            }
+        }
+    )
 }
 
 

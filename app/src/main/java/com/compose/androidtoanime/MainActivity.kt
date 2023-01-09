@@ -13,8 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,9 +25,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
+import com.compose.androidtoanime.Utils.AppUtils.Companion.ENABLE_PREMIUM
 import com.compose.androidtoanime.ui.theme.AndroidToAnimeTheme
 import com.compose.androidtoanime.viewmodels.ViewModel
-import com.wishes.jetpackcompose.runtime.NavRoutes
 import com.wishes.jetpackcompose.runtime.NavigationHost
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -44,20 +42,12 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 val viewModel: ViewModel = hiltViewModel()
                 val navController = rememberNavController()
-
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        TopBar(myphoto = {
-                            navController.navigate(NavRoutes.MyPhotos.route)
-                        }) {
-                            viewModel.openPremium = true
-                        }
-                    },
-
-                    ) {
-                    NavigationHost(navController, viewModel)
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    NavigationHost(navController = navController, viewModel)
                 }
+
+                //Splash(navController,viewModel)
+
                 if (viewModel.openPremium)
                     Premium() {
                         viewModel.openPremium = false
@@ -68,30 +58,32 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TopBar(myphoto:()->Unit,open:()->Unit) {
+fun TopBar(myphoto: () -> Unit, open: () -> Unit) {
     SmallTopAppBar(
         title = {
             Text(text = stringResource(id = R.string.app_name))
         },
         navigationIcon = {},
         actions = {
-            Icon(
-                painter = painterResource(id = R.drawable.premium),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier
-                    .size(30.dp)
-                    .padding(2.dp)
-                    .clickable {
-                        open()
-                    }
-            )
+            if (ENABLE_PREMIUM)
+                Icon(
+                    painter = painterResource(id = R.drawable.premium),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .size(27.dp)
+                        .padding(2.dp)
+                        .clickable {
+                            open()
+                        }
+                )
+            Spacer(modifier = Modifier.width(3.dp))
             Icon(
                 painter = painterResource(id = R.drawable.image),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
-                    .size(30.dp)
+                    .size(27.dp)
                     .padding(4.dp)
                     .clickable {
                         myphoto()
@@ -124,7 +116,8 @@ fun Premium(close: () -> Unit) {
                     .clip(RoundedCornerShape(30.dp))
                     .background(Color.White)
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 30.dp, bottom = 15.dp)
@@ -139,7 +132,8 @@ fun Premium(close: () -> Unit) {
                     )
                     Icon(Icons.Default.Close, contentDescription = null,
                         modifier = Modifier
-                            .size(40.dp).padding(10.dp)
+                            .size(40.dp)
+                            .padding(10.dp)
                             .clickable {
                                 close()
                             }

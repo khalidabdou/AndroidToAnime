@@ -81,6 +81,7 @@ class ViewModel @Inject constructor(
     }
 
     fun getPhotos() = viewModelScope.launch(Dispatchers.IO) {
+        //Log.d("ads", "begin==p===")
         repo.localData.getPhotos().collect {
             myPhotos = it
         }
@@ -92,14 +93,14 @@ class ViewModel @Inject constructor(
 
 
     fun getAds() = viewModelScope.launch {
-
+        Log.d("ads", "begin==p===")
+        val res=repo.remote.getAds()
+        infos.value= HandleResponse(res).handleResult()
         when(infos.value){
-            is NetworkResults.Error ->{}
+            is NetworkResults.Error ->{
+                Log.d("ads", "err")
+            }
             is NetworkResults.Success ->{
-                try {
-                    val response = repo.remote.getAds()
-                    infos.value  = HandleResponse(response).handleResult()
-
                     infos.value.data!!.ads.forEach {
                         Log.d("FAN", it.ad_id)
                         when (it.type) {
@@ -109,12 +110,11 @@ class ViewModel @Inject constructor(
                             }
                             "inter" -> {
                                 Inter = it
-                                //Log.d("ads", Inter.toString())
+                                Log.d("ads", Inter.toString())
                             }
                             "open" -> {
-                                Log.d("FAN", it.ad_id)
                                 OpenAd = it
-                                //Log.d("ads", OpenAd.toString())
+                                Log.d("ads", OpenAd.toString())
                             }
                             "rewarded" -> {
                                 Rewarded = it
@@ -140,14 +140,7 @@ class ViewModel @Inject constructor(
                             }
                         }
                     }
-                } catch (ex: Exception) {
-                    Log.d("Exception", ex.toString())
-                }
             }
-        }
-
-        if (infos.value is NetworkResults.Success) {
-
         }
     }
 

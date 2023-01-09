@@ -15,6 +15,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.wishes.jetpackcompose.admob.applovin
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
@@ -28,7 +29,9 @@ class AppUtils {
         val TAG_D = "debug_response"
         const val TABLE_IMAGE = "table_photos"
         const val DATABASE_NAME = "db_name"
-        const val MAX_PHOTO = 20
+        val applovinClass = applovin()
+        const val MAX_PHOTO = 200
+        const val ENABLE_PREMIUM = false
         lateinit var bitmap: Bitmap
 
 
@@ -66,7 +69,7 @@ class AppUtils {
             throw Exception("File not found")
         }
 
-         fun hasStoragePermission(context: Context): Boolean {
+        fun hasStoragePermission(context: Context): Boolean {
             return (ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE

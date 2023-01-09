@@ -3,6 +3,7 @@ package com.wishes.jetpackcompose.data
 
 
 
+import com.compose.androidtoanime.data.Ads
 import com.compose.androidtoanime.data.ResponsePhoto
 import com.compose.androidtoanime.data.entities.Api
 import okhttp3.MultipartBody
@@ -21,7 +22,7 @@ class RemoteDataSource @Inject constructor(
     }
 
 
-    suspend fun getAds()=wallApi.getAds()
+    suspend fun getAds():Response<Ads?> = wallApi.getAds()
 
 
 }

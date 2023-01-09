@@ -55,47 +55,40 @@ fun Splash(navController: NavHostController, viewModel: ViewModel) {
         viewModel.getAds()
     } else if (viewModel.infos.value is NetworkResults.Error) {
         LaunchedEffect(key1 = true) {
-
             startAnimation = true
             delay(2000)
             navController.popBackStack()
-            navController.navigate(NavRoutes.Upload.route)
+            navController.navigate(NavRoutes.Home.route)
             //Toast.makeText(context, "${viewModel.adsList.value}", Toast.LENGTH_LONG).show()
         }
     } else {
         LaunchedEffect(key1 = true) {
-
             startAnimation = true
             delay(2000)
             navController.popBackStack()
-            navController.navigate(NavRoutes.Upload.route)
+            navController.navigate(NavRoutes.Home.route)
             //Toast.makeText(context, "${viewModel.adsList.value}", Toast.LENGTH_LONG).show()
-
         }
     }
 
-    Splash(alpha = alphaAnim.value,)
+    MSplash(alpha = alphaAnim.value,)
 }
 
 @Composable
-fun Splash(alpha: Float) {
+fun MSplash(alpha: Float) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-        Icon(
-            modifier = Modifier
+        Image(
+            modifier = Modifier.size(90.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .alpha(alpha),
-            painter = painterResource(id = R.drawable.placeholder),
+            painter = painterResource(id = R.drawable.magic),
             contentDescription = "Logo Icon",
-            tint = MaterialTheme.colorScheme.primary
-
-            //tint = Color.DarkGray
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
@@ -104,7 +97,7 @@ fun Splash(alpha: Float) {
             style = MaterialTheme.typography.titleLarge
         )
         Text(
-            text = stringResource(id = R.string.app_name),
+            text = stringResource(id = R.string.subtitle),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium
         )

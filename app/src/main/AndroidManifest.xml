@@ -22,6 +22,13 @@
         android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_id" />
+        <meta-data android:name="applovin.sdk.key"
+            android:value="bp46QEk1T9p-coXkn4KpHrU4c1Pwrx01hFgZOKHFQvJS9C7xr2ZX5saToxMGvfap5uk00kqNwpkTxIB8Dasyks"/>
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
