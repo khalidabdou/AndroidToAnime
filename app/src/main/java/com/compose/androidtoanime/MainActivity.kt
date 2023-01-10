@@ -64,7 +64,21 @@ fun TopBar(myphoto: () -> Unit, share: () -> Unit, open: () -> Unit) {
         title = {
             Text(text = stringResource(id = R.string.app_name))
         },
-        navigationIcon = {},
+        navigationIcon = {
+            Spacer(modifier = Modifier.width(3.dp))
+            Icon(
+                painter = painterResource(id = R.drawable.settings),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .size(27.dp)
+                    .padding(2.dp)
+                    .clickable {
+                        //open()
+                    }
+            )
+            Spacer(modifier = Modifier.width(3.dp))
+        },
         actions = {
             if (ENABLE_PREMIUM)
                 Icon(
@@ -80,7 +94,7 @@ fun TopBar(myphoto: () -> Unit, share: () -> Unit, open: () -> Unit) {
                 )
             Spacer(modifier = Modifier.width(3.dp))
             Icon(
-                painter = painterResource(id = R.drawable.ic_share),
+                painter = painterResource(id = R.drawable.share),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
@@ -92,7 +106,7 @@ fun TopBar(myphoto: () -> Unit, share: () -> Unit, open: () -> Unit) {
             )
             Spacer(modifier = Modifier.width(3.dp))
             Icon(
-                painter = painterResource(id = R.drawable.image),
+                painter = painterResource(id = R.drawable.photos),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier

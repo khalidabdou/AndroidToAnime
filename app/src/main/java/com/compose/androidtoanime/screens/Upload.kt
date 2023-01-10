@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.net.Uri
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -11,6 +12,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -28,7 +30,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.ImageLoader
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.request.ImageRequest
+import coil.size.Size
 import com.compose.androidtoanime.R
 import com.compose.androidtoanime.Utils.AppUtils.Companion.MAX_PHOTO
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
@@ -150,6 +158,7 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                         }),
                     )
                     LoadingAnimation1()
+                    GifImage()
                 }
                 Toast.makeText(context, "Loading ...", Toast.LENGTH_LONG).show()
             }
@@ -181,7 +190,7 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                         .padding(5.dp), horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     if (imageUri == null)
-                        Button(onClick = {
+                        OutlinedButton(onClick = {
                             imagePicker.launch("image/*")
                             if (!hasStoragePermission(context))
                                 launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -189,7 +198,7 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
 
                         }) {
                             Icon(
-                                painter = painterResource(id = R.drawable.upload),
+                                painter = painterResource(id = R.drawable.gallery),
                                 contentDescription = null,
                                 modifier = Modifier.size(27.dp)
                             )
@@ -200,7 +209,7 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                             )
                         }
                     if (imageUri != null) {
-                        Button(onClick = {
+                        OutlinedButton(onClick = {
                             if (hasStoragePermission(context)) {
                                 imagePicker.launch("image/*")
                             } else {
@@ -215,7 +224,7 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
 
                         }) {
                             Icon(
-                                painter = painterResource(id = R.drawable.upload),
+                                painter = painterResource(id = R.drawable.gallery),
                                 contentDescription = null,
                                 modifier = Modifier.size(27.dp)
                             )
@@ -229,13 +238,13 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                             }
                         }) {
                             Icon(
-                                painter = painterResource(id = R.drawable.convert),
+                                painter = painterResource(id = R.drawable.magic),
                                 contentDescription = null,
                                 modifier = Modifier.size(27.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "Convert To Anime",
+                                text = "Convert",
                                 style = MaterialTheme.typography.titleMedium
                             )
                         }
@@ -310,7 +319,31 @@ fun Permission(onConfirm: () -> Unit) {
     )
 }
 
-
+@Composable
+fun GifImage(
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .components {
+            if (SDK_INT >= 28) {
+                add(ImageDecoderDecoder.Factory())
+            } else {
+                add(GifDecoder.Factory())
+            }
+        }
+        .build()
+    Image(
+        painter = rememberAsyncImagePainter(
+            ImageRequest.Builder(context).data(data = R.drawable.animation).apply(block = {
+                size(Size.ORIGINAL)
+            }).build(), imageLoader = imageLoader
+        ),
+        contentDescription = null,
+        modifier = modifier.fillMaxWidth(),
+    )
+    Text(text = "Please wait ...")
+}
 
 
 

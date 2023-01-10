@@ -32,7 +32,7 @@ class AppUtils {
         const val DATABASE_NAME = "db_name"
         val applovinClass = applovin()
         const val MAX_PHOTO = 200
-        const val ENABLE_PREMIUM = false
+        const val ENABLE_PREMIUM = true
         lateinit var bitmap: Bitmap
 
 
@@ -187,7 +187,7 @@ class AppUtils {
             return null
         }
 
-        fun sharePalette(context: Context, bitmap: Bitmap) {
+        fun sharePalette(context: Context, bitmap: Bitmap,packageIntent: String?) {
             val bitmapPath = MediaStore.Images.Media.insertImage(
                 context.contentResolver,
                 bitmap,
@@ -196,6 +196,8 @@ class AppUtils {
             )
             val bitmapUri = Uri.parse(bitmapPath)
             val intent = Intent(Intent.ACTION_SEND)
+            if (packageIntent!=null)
+                intent.setPackage("com.whatsapp");
             intent.type = "image/png"
            intent.putExtra(Intent.EXTRA_TEXT,"${context.getString(R.string.send_to)} \n" +
                    " https://play.google.com/store/apps/details?id=${context.packageName}")

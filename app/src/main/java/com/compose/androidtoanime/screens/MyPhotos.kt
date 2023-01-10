@@ -106,7 +106,7 @@ fun MyPhotoItem(url: String, context: Context, onDelete: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_share),
+                painter = painterResource(id = R.drawable.share),
                 contentDescription = null,
                 modifier = Modifier
                     .size(27.dp).padding(6.dp)
@@ -116,7 +116,7 @@ fun MyPhotoItem(url: String, context: Context, onDelete: () -> Unit) {
                             myHandler.post {
                                 //mImageView.setImageBitmap(mImage)
                                 if (mImage != null) {
-                                    AppUtils.sharePalette(context, mImage)
+                                    AppUtils.sharePalette(context, mImage,null)
                                 }
                             }
                         }
@@ -124,10 +124,10 @@ fun MyPhotoItem(url: String, context: Context, onDelete: () -> Unit) {
                     }
             )
             Icon(
-                painter = painterResource(id = R.drawable.ic_download),
+                painter = painterResource(id = R.drawable.download),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(27.dp).padding(6.dp)
+                    .size(27.dp).padding(2.dp)
                     .clickable
                     {
                         showInterstitialAfterClick(context)

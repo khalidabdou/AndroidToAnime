@@ -51,26 +51,9 @@ fun Share(viewModel: ViewModel) {
                 .fillMaxWidth()
                 .padding(5.dp), horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-
-            MyButton(
-                text = "Share",
-                painter = painterResource(id = R.drawable.ic_share)
-            ) {
-                showInterstitialAfterClick(context)
-                myExecutor.execute {
-                    val mImage = toBitmap(context,url)
-                    myHandler.post {
-                        //mImageView.setImageBitmap(mImage)
-                        if(mImage!=null){
-                            sharePalette(context,mImage)
-                        }
-                    }
-                }
-
-            }
             MyButton(
                 text = "Download",
-                painter = painterResource(id = R.drawable.ic_download)
+                painter = painterResource(id = R.drawable.download)
             ) {
                 showInterstitialAfterClick(context)
                 myExecutor.execute {
@@ -84,6 +67,39 @@ fun Share(viewModel: ViewModel) {
                 }
                 //saveImage(context = context, toBitmap(context,url))
             }
+            MyButton(
+                text = "Share",
+                painter = painterResource(id = R.drawable.share)
+            ) {
+                showInterstitialAfterClick(context)
+                myExecutor.execute {
+                    val mImage = toBitmap(context,url)
+                    myHandler.post {
+                        //mImageView.setImageBitmap(mImage)
+                        if(mImage!=null){
+                            sharePalette(context,mImage,null)
+                        }
+                    }
+                }
+
+            }
+            MyButton(
+                text = null,
+                painter = painterResource(id = R.drawable.whatsapp)
+            ) {
+                showInterstitialAfterClick(context)
+                myExecutor.execute {
+                    val mImage = toBitmap(context,url)
+                    myHandler.post {
+                        //mImageView.setImageBitmap(mImage)
+                        if(mImage!=null){
+                            sharePalette(context,mImage,"")
+                        }
+                    }
+                }
+
+            }
+
         }
     }
 }
