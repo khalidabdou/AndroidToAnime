@@ -23,7 +23,7 @@ class AdProvider {
     companion object {
         var Banner: Ad = Ad(
             0,
-            "ca-app-pub-3940256099942544/6300978111000",
+            "",
             "banner",
             false,
             null,

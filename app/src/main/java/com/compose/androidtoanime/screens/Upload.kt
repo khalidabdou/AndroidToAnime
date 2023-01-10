@@ -37,6 +37,8 @@ import com.compose.androidtoanime.Utils.AppUtils.Companion.hasStoragePermission
 import com.compose.androidtoanime.Utils.FileUtil
 import com.compose.androidtoanime.Utils.NetworkResults
 import com.compose.androidtoanime.viewmodels.ViewModel
+import com.wishes.jetpackcompose.admob.loadInterstitial
+import com.wishes.jetpackcompose.admob.showInterstitialAfterClick
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -54,6 +56,10 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
             mutableStateOf(false)
         else mutableStateOf(true)
     }
+
+    LaunchedEffect(key1 = true, block = {
+        loadInterstitial(context)
+    })
 
 
     var pathImage: String? = null
@@ -73,10 +79,6 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.getPhotos()
-        //viewModel.getAds()
-    }
 
 
     val infiniteTransition = rememberInfiniteTransition()
@@ -132,7 +134,6 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
             is NetworkResults.Error -> {
                 Toast.makeText(context, "Error: Please try later", Toast.LENGTH_SHORT).show()
                 viewModel.readyImage = NetworkResults.NotYet()
-
             }
 
             is NetworkResults.Loading -> {
@@ -150,7 +151,7 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                     )
                     LoadingAnimation1()
                 }
-                Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Loading ...", Toast.LENGTH_LONG).show()
             }
             is NetworkResults.NotYet -> {
                 if (openPermission)

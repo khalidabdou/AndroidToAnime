@@ -15,6 +15,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.compose.androidtoanime.R
 import com.wishes.jetpackcompose.admob.applovin
 import java.io.*
 import java.net.HttpURLConnection
@@ -34,6 +35,24 @@ class AppUtils {
         const val ENABLE_PREMIUM = false
         lateinit var bitmap: Bitmap
 
+
+
+        fun share(context: Context) {
+            val shareIntent = Intent()
+            shareIntent.action = Intent.ACTION_SEND
+            shareIntent.type = "text/plain"
+            shareIntent.putExtra(
+                Intent.EXTRA_TEXT,
+                "${context.getString(R.string.send_to)} \n https://play.google.com/store/apps/details?id=${context.packageName}"
+            );
+            context.startActivity(
+                Intent.createChooser(
+                    shareIntent,
+                    "${context.getString(R.string.send_to)} \n" +
+                            " https://play.google.com/store/apps/details?id=${context.packageName}"
+                )
+            )
+        }
 
         fun saveBitmapToFile(bitmap: Bitmap, file: File): File {
             // Create a file output stream to write the bitmap data to the file
@@ -178,6 +197,8 @@ class AppUtils {
             val bitmapUri = Uri.parse(bitmapPath)
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "image/png"
+           intent.putExtra(Intent.EXTRA_TEXT,"${context.getString(R.string.send_to)} \n" +
+                   " https://play.google.com/store/apps/details?id=${context.packageName}")
             intent.putExtra(Intent.EXTRA_STREAM, bitmapUri)
             context.startActivity(Intent.createChooser(intent, "Share"))
         }

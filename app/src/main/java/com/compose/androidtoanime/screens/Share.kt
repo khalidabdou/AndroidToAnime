@@ -8,6 +8,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
@@ -20,6 +21,7 @@ import com.compose.androidtoanime.Utils.AppUtils.Companion.saveImage
 import com.compose.androidtoanime.Utils.AppUtils.Companion.sharePalette
 import com.compose.androidtoanime.Utils.AppUtils.Companion.toBitmap
 import com.compose.androidtoanime.viewmodels.ViewModel
+import com.wishes.jetpackcompose.admob.showInterstitialAfterClick
 import java.util.concurrent.Executors
 
 @Composable
@@ -31,8 +33,11 @@ fun Share(viewModel: ViewModel) {
 
     val myExecutor = Executors.newSingleThreadExecutor()
     val myHandler = Handler(Looper.getMainLooper())
-    Column() {
 
+    LaunchedEffect(key1 = true, block = {
+        showInterstitialAfterClick(context)
+    })
+    Column() {
         AsyncImage(
             model = url,
             contentDescription = null,
@@ -51,6 +56,7 @@ fun Share(viewModel: ViewModel) {
                 text = "Share",
                 painter = painterResource(id = R.drawable.ic_share)
             ) {
+                showInterstitialAfterClick(context)
                 myExecutor.execute {
                     val mImage = toBitmap(context,url)
                     myHandler.post {
@@ -66,6 +72,7 @@ fun Share(viewModel: ViewModel) {
                 text = "Download",
                 painter = painterResource(id = R.drawable.ic_download)
             ) {
+                showInterstitialAfterClick(context)
                 myExecutor.execute {
                     val mImage = toBitmap(context,url)
                     myHandler.post {

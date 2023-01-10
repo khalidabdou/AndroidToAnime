@@ -11,7 +11,10 @@ interface IDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPhoto(images: ResponsePhoto)
 
-    @Query("SELECT * FROM table_photos")
+    @Query("SELECT * FROM table_photos ORDER BY id desc")
     fun getPhotos(): Flow<List<ResponsePhoto>>
+
+    @Delete
+    suspend fun delete(images: ResponsePhoto)
 
 }

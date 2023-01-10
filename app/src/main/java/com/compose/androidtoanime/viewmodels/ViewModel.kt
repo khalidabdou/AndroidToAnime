@@ -31,6 +31,7 @@ import com.compose.androidtoanime.data.ResponsePhoto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -49,10 +50,18 @@ class ViewModel @Inject constructor(
 
 ) : AndroidViewModel(application) {
 
+    //local
     var myPhotos by mutableStateOf(emptyList<ResponsePhoto>())
+
+    //remote
     var readyImage by mutableStateOf<NetworkResults<ResponsePhoto>?>(NetworkResults.NotYet())
-    var openPremium by mutableStateOf(false)
     val infos = mutableStateOf<NetworkResults<Ads>>(NetworkResults.Loading())
+
+    //premium
+
+    //variables
+    var openPremium by mutableStateOf(false)
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("Recycle")
@@ -76,11 +85,9 @@ class ViewModel @Inject constructor(
             insertPhoto(readyImage!!.data!!)
         }
 
-
-
     }
 
-    fun getPhotos() = viewModelScope.launch(Dispatchers.IO) {
+    suspend fun getPhotos() = withContext(Dispatchers.Main){
         //Log.d("ads", "begin==p===")
         repo.localData.getPhotos().collect {
             myPhotos = it
@@ -142,6 +149,10 @@ class ViewModel @Inject constructor(
                     }
             }
         }
+    }
+
+    fun deleteFromRoom(photo: ResponsePhoto) = viewModelScope.launch(Dispatchers.Main) {
+        repo.localData.delete(photo)
     }
 
 

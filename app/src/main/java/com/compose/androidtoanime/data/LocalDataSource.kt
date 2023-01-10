@@ -13,4 +13,6 @@ class LocalDataSource @Inject constructor(
     suspend fun insertPhoto(photo: ResponsePhoto)= iDao.insertPhoto(photo)
     fun getPhotos():Flow<List<ResponsePhoto>> = iDao.getPhotos()
 
+    suspend fun delete(photo: ResponsePhoto)=iDao.delete(photo)
+
 }

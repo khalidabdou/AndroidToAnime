@@ -26,6 +26,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.compose.androidtoanime.Utils.AppUtils.Companion.ENABLE_PREMIUM
+import com.compose.androidtoanime.Utils.AppUtils.Companion.share
 import com.compose.androidtoanime.ui.theme.AndroidToAnimeTheme
 import com.compose.androidtoanime.viewmodels.ViewModel
 import com.wishes.jetpackcompose.runtime.NavigationHost
@@ -58,7 +59,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TopBar(myphoto: () -> Unit, open: () -> Unit) {
+fun TopBar(myphoto: () -> Unit, share: () -> Unit, open: () -> Unit) {
     SmallTopAppBar(
         title = {
             Text(text = stringResource(id = R.string.app_name))
@@ -77,6 +78,18 @@ fun TopBar(myphoto: () -> Unit, open: () -> Unit) {
                             open()
                         }
                 )
+            Spacer(modifier = Modifier.width(3.dp))
+            Icon(
+                painter = painterResource(id = R.drawable.ic_share),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .size(27.dp)
+                    .padding(2.dp)
+                    .clickable {
+                        share()
+                    }
+            )
             Spacer(modifier = Modifier.width(3.dp))
             Icon(
                 painter = painterResource(id = R.drawable.image),

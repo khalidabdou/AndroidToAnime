@@ -15,8 +15,8 @@ android {
         applicationId "com.photo.to.anime"
         minSdk 23
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -113,6 +113,10 @@ dependencies {
     implementation 'com.facebook.android:audience-network-sdk:6.12.0'
     implementation("com.applovin:applovin-sdk:11.4.4")
     implementation 'com.applovin.mediation:facebook-adapter:6.11.0.5'
+
+
+    //qonvertion
+    implementation 'io.qonversion.android.sdk:sdk:4.0.0'
 
 
 }

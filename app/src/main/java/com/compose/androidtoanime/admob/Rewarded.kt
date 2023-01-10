@@ -11,7 +11,6 @@ import com.google.android.gms.ads.rewarded.RewardItem
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 
-
 private var mRewardedAd: RewardedAd? = null
 
 fun loadRewarded(context: Context) {
