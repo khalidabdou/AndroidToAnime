@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
@@ -38,14 +39,21 @@ fun Share(viewModel: ViewModel) {
         showInterstitialAfterClick(context)
     })
     Column() {
-        AsyncImage(
-            model = url,
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(1f),
-            //contentScale = ContentScale.Crop
-        )
+        Box(modifier  = Modifier
+            .fillMaxSize()
+            .weight(1f),
+        contentAlignment = Alignment.Center
+        ){
+            LoadingAnimation1()
+            AsyncImage(
+                model = url,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                //contentScale = ContentScale.Crop
+            )
+        }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()

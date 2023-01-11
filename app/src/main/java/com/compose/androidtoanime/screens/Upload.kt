@@ -126,7 +126,7 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
     }
 
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier) {
         val imagePicker = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
             onResult = { uri ->

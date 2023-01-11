@@ -14,6 +14,9 @@ import com.compose.androidtoanime.data.AdProvider.Companion.OpenAd
 import com.facebook.ads.AdSettings
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.appopen.AppOpenAd
+import com.qonversion.android.sdk.Qonversion
+import com.qonversion.android.sdk.QonversionConfig
+import com.qonversion.android.sdk.dto.QLaunchMode
 import dagger.hilt.android.HiltAndroidApp
 import java.util.*
 
@@ -40,8 +43,14 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks, Lif
         AdSettings.addTestDevice("2fc9747b-b77b-4c23-9ae0-53c42d39afbd")
         AppLovinSdk.getInstance( this ).setMediationProvider( "max" )
         AppLovinSdk.getInstance( this ).initializeSdk({ configuration: AppLovinSdkConfiguration ->
-
         })
+
+        val qonversionConfig = QonversionConfig.Builder(
+            this,
+            "projectKey",
+            QLaunchMode.SubscriptionManagement
+        ).build()
+        Qonversion.initialize(qonversionConfig)
 
 
     }

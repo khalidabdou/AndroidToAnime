@@ -169,8 +169,9 @@ fun Premium(close: () -> Unit) {
 
                 itemSub("Unlimited")
                 itemSub("Remove Ads")
-                itemSub("Good Quality")
+                itemSub("High Quality")
                 itemSub("Speed Converting")
+
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
                     modifier = Modifier
@@ -184,7 +185,7 @@ fun Premium(close: () -> Unit) {
                             ),
                     ),
                     onClick = {}) {
-                    Text(text = "Buy Now 4,99$")
+                    Text(text = "Buy Now 4,99$/mo")
                 }
             }
             Image(
