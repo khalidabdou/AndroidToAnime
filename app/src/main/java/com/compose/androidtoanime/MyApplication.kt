@@ -14,9 +14,7 @@ import com.compose.androidtoanime.data.AdProvider.Companion.OpenAd
 import com.facebook.ads.AdSettings
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.appopen.AppOpenAd
-import com.qonversion.android.sdk.Qonversion
-import com.qonversion.android.sdk.QonversionConfig
-import com.qonversion.android.sdk.dto.QLaunchMode
+
 import dagger.hilt.android.HiltAndroidApp
 import java.util.*
 
@@ -45,12 +43,7 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks, Lif
         AppLovinSdk.getInstance( this ).initializeSdk({ configuration: AppLovinSdkConfiguration ->
         })
 
-        val qonversionConfig = QonversionConfig.Builder(
-            this,
-            "projectKey",
-            QLaunchMode.SubscriptionManagement
-        ).build()
-        Qonversion.initialize(qonversionConfig)
+
 
 
     }

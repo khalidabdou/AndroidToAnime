@@ -1,7 +1,6 @@
 package com.compose.androidtoanime.screens
 
 import android.Manifest
-import android.app.Activity
 import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
@@ -46,7 +45,7 @@ import com.compose.androidtoanime.Utils.FileUtil
 import com.compose.androidtoanime.Utils.NetworkResults
 import com.compose.androidtoanime.viewmodels.ViewModel
 import com.wishes.jetpackcompose.admob.loadInterstitial
-import com.wishes.jetpackcompose.admob.showInterstitialAfterClick
+import com.wishes.jetpackcompose.runtime.NavRoutes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -88,9 +87,8 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
     }
 
 
-
     val infiniteTransition = rememberInfiniteTransition()
-    val angle by infiniteTransition.animateFloat(
+    val offset by infiniteTransition.animateFloat(
         initialValue = 0F,
         targetValue = -100F,
         animationSpec = infiniteRepeatable(
@@ -98,6 +96,20 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
             repeatMode = RepeatMode.Reverse
         )
     )
+
+    //scan photo animation
+    val transition = rememberInfiniteTransition()
+    val translateAnim by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1000f,
+        animationSpec = infiniteRepeatable(
+            tween(durationMillis = 1200, easing = FastOutSlowInEasing),
+            RepeatMode.Reverse
+        )
+    )
+
+
+
 
 
 
@@ -107,22 +119,20 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
             pathImage = FileUtil(context).getPath(imageUri!!)
             bitmap = pathImage?.let { compressImage(it) }!!
         } else
-            Toast.makeText(context, "try again", Toast.LENGTH_SHORT).show()
-
-        //pathImage = queryImage(context = context, uri = getUri)
-        //Log.d(TAG_D, )
+            Toast.makeText(context, stringResource(R.string.try_later), Toast.LENGTH_SHORT).show()
     }
 
     BackHandler() {
         if (viewModel.readyImage is NetworkResults.Loading) {
-            Toast.makeText(context, "Please Wait for result", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.wait), Toast.LENGTH_SHORT).show()
             return@BackHandler
         }
         if (viewModel.readyImage !is NetworkResults.NotYet) {
             //imageUri=null
             viewModel.readyImage = NetworkResults.NotYet()
         } else
-            (context as Activity).finish()
+            viewModel.openExit = true
+
     }
 
 
@@ -138,13 +148,15 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
         when (viewModel.readyImage) {
             is NetworkResults.Success -> {
                 Share(viewModel = viewModel)
+                //viewModel.readyImage = NetworkResults.NotYet()
+                //navController.navigate(NavRoutes.Share.route)
             }
             is NetworkResults.Error -> {
-                Toast.makeText(context, "Error: Please try later", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.try_later), Toast.LENGTH_SHORT).show()
                 viewModel.readyImage = NetworkResults.NotYet()
             }
-
             is NetworkResults.Loading -> {
+
                 Box(contentAlignment = Alignment.Center) {
                     AsyncImage(
                         model = pathImage,
@@ -158,9 +170,10 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                         }),
                     )
                     LoadingAnimation1()
-                    GifImage()
+                    //GifImage()
                 }
-                Toast.makeText(context, "Loading ...", Toast.LENGTH_LONG).show()
+
+                //Toast.makeText(context, "Loading ...", Toast.LENGTH_LONG).show()
             }
             is NetworkResults.NotYet -> {
                 if (openPermission)
@@ -174,7 +187,7 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .size(50.dp)
-                            .offset(y = angle.dp)
+                            .offset(y = offset.dp)
                             .weight(1f),
                     ) else
                     AsyncImage(
@@ -204,7 +217,7 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "Upload",
+                                text = stringResource(R.string.upload),
                                 style = MaterialTheme.typography.titleMedium
                             )
                         }
@@ -215,7 +228,7 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                             } else {
                                 Toast.makeText(
                                     context,
-                                    "storage permission needed",
+                                    context.getString(R.string.permission),
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -244,7 +257,7 @@ fun Upload(navController: NavHostController, viewModel: ViewModel) {
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "Convert",
+                                text = stringResource(R.string.convert),
                                 style = MaterialTheme.typography.titleMedium
                             )
                         }
@@ -298,6 +311,7 @@ fun LoadingAnimation1(
     }
 }
 
+
 @Composable
 fun Permission(onConfirm: () -> Unit) {
     AlertDialog(onDismissRequest = {},
@@ -313,7 +327,7 @@ fun Permission(onConfirm: () -> Unit) {
             Button(onClick = {
                 onConfirm()
             }) {
-                Text(text = "Agree")
+                Text(text = stringResource(R.string.agree))
             }
         }
     )
@@ -342,7 +356,7 @@ fun GifImage(
         contentDescription = null,
         modifier = modifier.fillMaxWidth(),
     )
-    Text(text = "Please wait ...")
+    Text(text = stringResource(id = R.string.wait))
 }
 
 

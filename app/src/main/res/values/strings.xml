@@ -1,9 +1,32 @@
 <resources>
 
-    <string name="admob_id">ca-app-pub-3940256099942544~3347511713</string>
-    <string name="app_name">AnimeMagic</string>
+    <string name="admob_id" translatable="false">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="app_name" translatable="false">AnimeMagic</string>
+    <string name="site_url" translatable="false">https://next-to-anime.vercel.app/</string>
     <string name="needed_permission">We would like to request permission to transform the photo into an anime style image. Could you please grant us the rights to do so?</string>
     <string name="subtitle">Photo to anime</string>
     <string name="empty">Empty</string>
-    <string name="send_to">AnimeMagic : Convert your photo to Anime</string>
+    <string name="send_to">AnimeMagic 💖 : Convert your photo to Anime</string>
+    <string name="invite">Invert</string>
+    <string name="rate">rate</string>
+    <string name="feed">feedback</string>
+    <string name="privacy">privacy policy</string>
+    <string name="site">Our website</string>
+    <string name="photos">Photos</string>
+    <string name="rate_title">Give 5 🌟</string>
+    <string name="title">Thank You 💖</string>
+    <string name="dailog_desc">💖 Love the app? 🌟 Leave us a rating on the Play Store! 🙏 Your support means a lot to us. 🙌 Thanks for using our app!</string>
+    <string name="exit">Exit</string>
+    <string name="How_to">How to use</string>
+    <string name="how_to_desc">After upload your photo click on `Convert` button , Your photo must be clear and contain a human face, illegal photos are not accepted</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="description">imagecontent</string>
+    <string name="download">Download</string>
+    <string name="share">Share</string>
+    <string name="try_later">Try Later or use another photo</string>
+    <string name="wait">Please Wait for result</string>
+    <string name="upload">Upload</string>
+    <string name="permission">storage permission needed</string>
+    <string name="convert">Convert</string>
+    <string name="agree">Agree</string>
 </resources>

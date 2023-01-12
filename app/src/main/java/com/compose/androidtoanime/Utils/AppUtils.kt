@@ -1,10 +1,7 @@
 package com.compose.androidtoanime.Utils
 
 import android.Manifest
-import android.content.ContentResolver
-import android.content.ContentValues
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -32,7 +29,7 @@ class AppUtils {
         const val DATABASE_NAME = "db_name"
         val applovinClass = applovin()
         const val MAX_PHOTO = 200
-        const val ENABLE_PREMIUM = true
+        const val ENABLE_PREMIUM = false
         lateinit var bitmap: Bitmap
 
 
@@ -205,6 +202,57 @@ class AppUtils {
             context.startActivity(Intent.createChooser(intent, "Share"))
         }
 
+
+        fun rateApp(context: Context) {
+            val appPackageName: String =
+                context.packageName // getPackageName() from Context or Activity object
+
+            try {
+                context.startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("market://details?id=$appPackageName")
+                    )
+                )
+            } catch (anfe: ActivityNotFoundException) {
+                context.startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")
+                    )
+                )
+            }
+        }
+
+        fun sendEmail(context: Context) {
+            val i = Intent(Intent.ACTION_SEND)
+            i.type = "message/rfc822"
+            i.putExtra(Intent.EXTRA_EMAIL, arrayOf("specialonesteam@gmail.com"))
+            i.putExtra(Intent.EXTRA_SUBJECT, context.packageName)
+            i.putExtra(Intent.EXTRA_TEXT, "")
+            try {
+                context.startActivity(Intent.createChooser(i, "Send mail..."))
+            } catch (ex: ActivityNotFoundException) {
+                Toast.makeText(
+                    context,
+                    "There are no email clients installed.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        fun openStore(url: String,context: Context) {
+            try {
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+            } catch (e: ActivityNotFoundException) {
+                context.startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://play.google.com/store/apps/details?id=$context.packageName")
+                    )
+                )
+            }
+        }
 
     }
 

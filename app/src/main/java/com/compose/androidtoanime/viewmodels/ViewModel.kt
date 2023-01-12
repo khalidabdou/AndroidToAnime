@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.compose.androidtoanime.BuildConfig
 import com.compose.androidtoanime.RepositoryImpl
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
 import com.compose.androidtoanime.Utils.AppUtils.Companion.generateNewPath
@@ -61,7 +62,10 @@ class ViewModel @Inject constructor(
 
     //variables
     var openPremium by mutableStateOf(false)
-
+    var navigateClick by mutableStateOf(false)
+    var openExit by mutableStateOf(false)
+    var openHow by mutableStateOf(false)
+    var image=""
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("Recycle")
@@ -153,6 +157,13 @@ class ViewModel @Inject constructor(
 
     fun deleteFromRoom(photo: ResponsePhoto) = viewModelScope.launch(Dispatchers.Main) {
         repo.localData.delete(photo)
+    }
+
+
+    fun getUrl():String{
+        val data = readyImage!!.data
+        image =BuildConfig.api + data?.folder + "crop" + data?.filename
+        return image
     }
 
 

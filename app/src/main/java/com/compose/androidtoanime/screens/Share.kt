@@ -2,6 +2,7 @@ package com.compose.androidtoanime.screens
 
 import android.os.Handler
 import android.os.Looper
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -12,10 +13,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.compose.androidtoanime.BuildConfig
 import com.compose.androidtoanime.R
 import com.compose.androidtoanime.Utils.AppUtils.Companion.saveImage
@@ -28,44 +32,37 @@ import java.util.concurrent.Executors
 @Composable
 fun Share(viewModel: ViewModel) {
 
-    val data = viewModel.readyImage!!.data
-    val url = BuildConfig.api + data?.folder + "crop" + data?.filename
     val context= LocalContext.current
-
     val myExecutor = Executors.newSingleThreadExecutor()
     val myHandler = Handler(Looper.getMainLooper())
 
-    LaunchedEffect(key1 = true, block = {
-        showInterstitialAfterClick(context)
-    })
     Column() {
         Box(modifier  = Modifier
             .fillMaxSize()
             .weight(1f),
         contentAlignment = Alignment.Center
         ){
-            LoadingAnimation1()
-            AsyncImage(
-                model = url,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                //contentScale = ContentScale.Crop
+            //LoadingAnimation1()
+            SubcomposeAsyncImage(
+                model = viewModel.getUrl(),
+                loading = {
+                    LoadingAnimation1()
+                },
+                contentDescription = stringResource(R.string.description)
             )
         }
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(5.dp), horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             MyButton(
-                text = "Download",
+                text = stringResource(R.string.download),
                 painter = painterResource(id = R.drawable.download)
             ) {
                 showInterstitialAfterClick(context)
                 myExecutor.execute {
-                    val mImage = toBitmap(context,url)
+                    val mImage = toBitmap(context,viewModel.getUrl())
                     myHandler.post {
                         //mImageView.setImageBitmap(mImage)
                         if(mImage!=null){
@@ -76,12 +73,12 @@ fun Share(viewModel: ViewModel) {
                 //saveImage(context = context, toBitmap(context,url))
             }
             MyButton(
-                text = "Share",
+                text = stringResource(R.string.share),
                 painter = painterResource(id = R.drawable.share)
             ) {
                 showInterstitialAfterClick(context)
                 myExecutor.execute {
-                    val mImage = toBitmap(context,url)
+                    val mImage = toBitmap(context,viewModel.getUrl())
                     myHandler.post {
                         //mImageView.setImageBitmap(mImage)
                         if(mImage!=null){
@@ -97,7 +94,7 @@ fun Share(viewModel: ViewModel) {
             ) {
                 showInterstitialAfterClick(context)
                 myExecutor.execute {
-                    val mImage = toBitmap(context,url)
+                    val mImage = toBitmap(context,viewModel.getUrl())
                     myHandler.post {
                         //mImageView.setImageBitmap(mImage)
                         if(mImage!=null){
