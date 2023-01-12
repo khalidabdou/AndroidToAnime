@@ -1,6 +1,8 @@
 package com.compose.androidtoanime
 
+import android.app.Activity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -32,10 +34,15 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
+import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.BillingClientStateListener
+import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.PurchasesUpdatedListener
 import com.compose.androidtoanime.Utils.AppUtils.Companion.ENABLE_PREMIUM
 import com.compose.androidtoanime.screens.DialogExit
 import com.compose.androidtoanime.screens.HowToUse
 import com.compose.androidtoanime.screens.MyNavigationDrawer
+import com.compose.androidtoanime.screens.Premium
 import com.compose.androidtoanime.ui.theme.AndroidToAnimeTheme
 import com.compose.androidtoanime.viewmodels.ViewModel
 import com.wishes.jetpackcompose.runtime.NavigationHost
@@ -49,10 +56,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AndroidToAnimeTheme {
-                // A surface container using the 'background' color from the theme
+
                 val viewModel: ViewModel = hiltViewModel()
                 val navController = rememberNavController()
                 val context= LocalContext.current
+
+
+
+
+
+                // A surface container using the 'background' color from the theme
                 //create animations
                 //var navigateClick by remember { mutableStateOf(false) }
 
@@ -85,16 +98,22 @@ class MainActivity : ComponentActivity() {
                         .rotate(rotate)
                         .clip(RoundedCornerShape(clipDp))
                 ) {
-
+                    viewModel.startConnexion(context)
+                    viewModel.getProducts(context)
                     NavigationHost(navController = navController, viewModel)
                 }
 
                 //Splash(navController,viewModel)
 
                 if (viewModel.openPremium)
-                    Premium() {
+                    Premium(close = {
                         viewModel.openPremium = false
+                    },
+                    purchase = {
+                        Toast.makeText(context,"offer", Toast.LENGTH_SHORT).show()
+                        viewModel.purchase((context as Activity))
                     }
+                        )
 
                 if (viewModel.openExit)
                     DialogExit(context){
@@ -192,98 +211,4 @@ fun TopBar(myphoto: () -> Unit,how:()->Unit, drawer: () -> Unit, share: () -> Un
     )
 }
 
-@Composable
-fun Premium(close: () -> Unit) {
-    Dialog(
-        onDismissRequest = { /*TODO*/ },
-        properties = DialogProperties(
-            dismissOnClickOutside = true,
-            dismissOnBackPress = true,
-        ),
-    ) {
 
-        Box(contentAlignment = Alignment.TopCenter) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(350.dp)
-                    .padding(top = 50.dp, start = 6.dp, end = 6.dp)
-                    .clip(RoundedCornerShape(30.dp))
-                    .background(Color.White)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 30.dp, bottom = 15.dp)
-                ) {
-                    Text(
-                        text = "Subscription",
-                        style = MaterialTheme.typography.titleLarge,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    )
-                    Icon(Icons.Default.Close, contentDescription = null,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .padding(10.dp)
-                            .clickable {
-                                close()
-                            }
-                    )
-                }
-
-                itemSub("Unlimited")
-                itemSub("Remove Ads")
-                itemSub("High Quality")
-                itemSub("Speed Converting")
-
-                Spacer(modifier = Modifier.weight(1f))
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColorFor(
-                            backgroundColor = MaterialTheme.colorScheme.primary,
-
-                            ),
-                    ),
-                    onClick = {}) {
-                    Text(text = "Buy Now 4,99$/mo")
-                }
-            }
-            Image(
-                painter = painterResource(id = R.drawable.diamond),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .padding(16.dp)
-            )
-        }
-    }
-
-
-}
-
-@Composable
-fun itemSub(text: String) {
-    Row(modifier = Modifier.padding(start = 20.dp, top = 10.dp)) {
-        Image(
-            painter = painterResource(id = R.drawable.check),
-            contentDescription = null,
-            modifier = Modifier.size(20.dp)
-        )
-        Spacer(modifier = Modifier.width(6.dp))
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center
-        )
-    }
-}

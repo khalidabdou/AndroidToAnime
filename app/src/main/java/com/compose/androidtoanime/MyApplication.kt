@@ -14,6 +14,10 @@ import com.compose.androidtoanime.data.AdProvider.Companion.OpenAd
 import com.facebook.ads.AdSettings
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.appopen.AppOpenAd
+import com.google.firebase.FirebaseApp
+
+import com.qonversion.android.sdk.*
+import com.qonversion.android.sdk.dto.QLaunchMode
 
 import dagger.hilt.android.HiltAndroidApp
 import java.util.*
@@ -33,6 +37,15 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks, Lif
 
     override fun onCreate() {
         super.onCreate()
+
+        FirebaseApp.initializeApp(this)
+        //Qonversion.launch(this, "projectKey", false)
+        val qonversionConfig = QonversionConfig.Builder(
+            this,
+            "GeuLDuKrCAa3aTgZISf7Te5uxDZKEN7S",
+            QLaunchMode.SubscriptionManagement
+        ).build()
+        Qonversion.initialize(qonversionConfig)
 
         registerActivityLifecycleCallbacks(this)
         MobileAds.initialize(this) {}

@@ -29,7 +29,7 @@ class AppUtils {
         const val DATABASE_NAME = "db_name"
         val applovinClass = applovin()
         const val MAX_PHOTO = 200
-        const val ENABLE_PREMIUM = false
+        const val ENABLE_PREMIUM = true
         lateinit var bitmap: Bitmap
 
 
