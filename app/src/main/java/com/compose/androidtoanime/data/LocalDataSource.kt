@@ -7,6 +7,7 @@ import javax.inject.Inject
 
 class LocalDataSource @Inject constructor(
     private val iDao: IDao,
+
 ) {
 
 
@@ -14,5 +15,7 @@ class LocalDataSource @Inject constructor(
     fun getPhotos():Flow<List<ResponsePhoto>> = iDao.getPhotos()
 
     suspend fun delete(photo: ResponsePhoto)=iDao.delete(photo)
+
+
 
 }

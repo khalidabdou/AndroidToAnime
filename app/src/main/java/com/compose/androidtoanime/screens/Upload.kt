@@ -3,7 +3,6 @@ package com.compose.androidtoanime.screens
 import android.Manifest
 import android.net.Uri
 import android.os.Build
-import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -11,7 +10,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -29,13 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import coil.ImageLoader
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
-import coil.request.ImageRequest
-import coil.size.Size
 import com.compose.androidtoanime.R
 import com.compose.androidtoanime.Utils.AppUtils.Companion.MAX_PHOTO
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
@@ -43,14 +35,13 @@ import com.compose.androidtoanime.Utils.AppUtils.Companion.compressImage
 import com.compose.androidtoanime.Utils.AppUtils.Companion.hasStoragePermission
 import com.compose.androidtoanime.Utils.FileUtil
 import com.compose.androidtoanime.Utils.NetworkResults
-import com.compose.androidtoanime.viewmodels.ViewModel
+import com.compose.androidtoanime.viewmodels.MainViewModel
 import com.wishes.jetpackcompose.admob.loadInterstitial
-import com.wishes.jetpackcompose.runtime.NavRoutes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Upload(navController: NavHostController, viewModel: ViewModel) {
+fun Upload(navController: NavHostController, viewModel: MainViewModel) {
 
     val context = LocalContext.current
     var imageUri by remember {

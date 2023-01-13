@@ -2,35 +2,30 @@ package com.compose.androidtoanime.screens
 
 import android.os.Handler
 import android.os.Looper
-import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
-import com.compose.androidtoanime.BuildConfig
 import com.compose.androidtoanime.R
 import com.compose.androidtoanime.Utils.AppUtils.Companion.saveImage
 import com.compose.androidtoanime.Utils.AppUtils.Companion.sharePalette
 import com.compose.androidtoanime.Utils.AppUtils.Companion.toBitmap
-import com.compose.androidtoanime.viewmodels.ViewModel
+import com.compose.androidtoanime.viewmodels.MainViewModel
 import com.wishes.jetpackcompose.admob.showInterstitialAfterClick
 import java.util.concurrent.Executors
 
 @Composable
-fun Share(viewModel: ViewModel) {
+fun Share(viewModel: MainViewModel) {
 
     val context= LocalContext.current
     val myExecutor = Executors.newSingleThreadExecutor()

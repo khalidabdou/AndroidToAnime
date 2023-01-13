@@ -34,7 +34,7 @@ import com.compose.androidtoanime.screens.HowToUse
 import com.compose.androidtoanime.screens.MyNavigationDrawer
 import com.compose.androidtoanime.screens.Premium
 import com.compose.androidtoanime.ui.theme.AndroidToAnimeTheme
-import com.compose.androidtoanime.viewmodels.ViewModel
+import com.compose.androidtoanime.viewmodels.MainViewModel
 import com.wishes.jetpackcompose.runtime.NavigationHost
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             AndroidToAnimeTheme {
 
-                val viewModel: ViewModel = hiltViewModel()
+                val viewModel: MainViewModel = hiltViewModel()
                 val navController = rememberNavController()
                 val context = LocalContext.current
                 val purchasesUpdatedListener =
@@ -55,14 +55,15 @@ class MainActivity : ComponentActivity() {
                         Log.d(TAG_BILLING,billingResult.debugMessage)
                         Log.d(TAG_BILLING,"-----------")
                         Log.d(TAG_BILLING,purchases.toString())
+                        //viewModel.verifySubPurchase(purchases!![0],billingClient, context = context)
                     }
-                var billingClient = BillingClient.newBuilder(context)
-                    .setListener(purchasesUpdatedListener)
-                    .enablePendingPurchases()
-                    .build()
-
-
-                viewModel.startBillingConnection(context, billingClient)
+//                var billingClient = BillingClient.newBuilder(context)
+//                    .setListener(purchasesUpdatedListener)
+//                    .enablePendingPurchases()
+//                    .build()
+//
+//
+//                viewModel.startBillingConnection(context, billingClient)
 
 
                 // A surface container using the 'background' color from the theme
@@ -114,13 +115,13 @@ class MainActivity : ComponentActivity() {
                             //viewModel.purchase((context as Activity))
 
                             //viewModel.launchBillingFlow((context as Activity))
-                            val productDetails = viewModel.productDetails
-                            if (productDetails != null)
-                                viewModel.makePurchase(
-                                    billingClient,
-                                    productDetails!!,
-                                    (context as Activity)
-                                )
+//                            val productDetails = viewModel.productDetails
+//                            if (productDetails != null)
+//                                viewModel.makePurchase(
+//                                    billingClient,
+//                                    productDetails!!,
+//                                    (context as Activity)
+//                                )
                         }
                     )
 

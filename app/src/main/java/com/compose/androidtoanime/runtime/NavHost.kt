@@ -5,12 +5,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.compose.androidtoanime.screens.*
-import com.compose.androidtoanime.viewmodels.ViewModel
+import com.compose.androidtoanime.viewmodels.MainViewModel
 
 
 
 @Composable
-fun NavigationHost(navController: NavHostController,viewModel: ViewModel) {
+fun NavigationHost(navController: NavHostController,viewModel: MainViewModel) {
 
     NavHost(
         navController = navController,

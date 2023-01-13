@@ -1,6 +1,5 @@
 package com.compose.androidtoanime.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,13 +11,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.compose.androidtoanime.TopBar
 import com.compose.androidtoanime.Utils.AppUtils.Companion.share
-import com.compose.androidtoanime.viewmodels.ViewModel
+import com.compose.androidtoanime.viewmodels.MainViewModel
 import com.ringtones.compose.feature.admob.AdvertViewAdmob
 import com.wishes.jetpackcompose.runtime.NavRoutes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(navController: NavHostController, viewModel: ViewModel) {
+fun Home(navController: NavHostController, viewModel: MainViewModel) {
     val context = LocalContext.current
     Scaffold(
         modifier = Modifier.fillMaxSize(),

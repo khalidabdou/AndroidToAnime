@@ -28,13 +28,12 @@ import coil.compose.AsyncImage
 import com.compose.androidtoanime.BuildConfig
 import com.compose.androidtoanime.R
 import com.compose.androidtoanime.Utils.AppUtils
-import com.compose.androidtoanime.viewmodels.ViewModel
+import com.compose.androidtoanime.viewmodels.MainViewModel
 import com.wishes.jetpackcompose.admob.showInterstitialAfterClick
 import java.util.concurrent.Executors
-import kotlin.math.log
 
 @Composable
-fun MyPhotos(viewModel: ViewModel) {
+fun MyPhotos(viewModel: MainViewModel) {
 
     //val data = viewModel.readyImage!!.data
     //val url = BuildConfig.api + data?.folder + "crop" + data?.filename
