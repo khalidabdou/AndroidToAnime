@@ -25,12 +25,14 @@ class AppUtils {
 
     companion object {
         val TAG_D = "debug_response"
+        val TAG_BILLING="debug_billing => "
         const val TABLE_IMAGE = "table_photos"
         const val DATABASE_NAME = "db_name"
         val applovinClass = applovin()
         const val MAX_PHOTO = 200
         const val ENABLE_PREMIUM = true
         lateinit var bitmap: Bitmap
+
 
 
 
