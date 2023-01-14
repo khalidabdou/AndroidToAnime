@@ -17,7 +17,6 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 
 
-
 var mInterstitialAd: InterstitialAd? = null
 var countShow = -1
 val showAd = 10
@@ -88,7 +87,7 @@ fun showInterstitialAfterClick(context: Context) {
         applovinClass.createInterstitialAd(context)
         applovinClass.show(context)
 
-        Log.d("applovinad","show")
+        Log.d("applovinad", "show")
 
     }
 }

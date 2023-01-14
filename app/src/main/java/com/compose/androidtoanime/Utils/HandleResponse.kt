@@ -3,7 +3,7 @@ package com.compose.androidtoanime.Utils
 import android.util.Log
 import retrofit2.Response
 
-class HandleResponse <T>(private val response: Response<T?>?) {
+class HandleResponse<T>(private val response: Response<T?>?) {
 
     fun handleResult(): NetworkResults<T> {
         Log.d("user", response.toString())

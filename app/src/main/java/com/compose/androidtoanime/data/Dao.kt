@@ -1,6 +1,5 @@
 package com.compose.androidtoanime.data
 
-import android.util.Log
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 

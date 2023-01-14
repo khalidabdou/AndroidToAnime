@@ -17,7 +17,6 @@ import javax.inject.Singleton
 import javax.net.ssl.*
 
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {

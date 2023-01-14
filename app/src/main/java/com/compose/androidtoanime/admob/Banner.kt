@@ -29,7 +29,6 @@ import com.facebook.ads.AdError
 import com.google.android.gms.ads.*
 
 
-
 @Composable
 fun AdvertViewAdmob(modifier: Modifier = Modifier) {
     val isInEditMode = LocalInspectionMode.current

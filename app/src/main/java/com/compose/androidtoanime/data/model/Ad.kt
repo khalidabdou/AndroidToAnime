@@ -16,7 +16,7 @@ data class Ads(
     @SerializedName(value = "admobe", alternate = ["ads"])
     val ads: List<Ad>,
 
-)
+    )
 
 class AdProvider {
 

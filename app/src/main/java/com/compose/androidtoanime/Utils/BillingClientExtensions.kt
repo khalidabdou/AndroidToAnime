@@ -1,6 +1,7 @@
 package com.compose.androidtoanime.Utils
 
 import com.android.billingclient.api.*
+import com.google.common.collect.ImmutableList
 import com.lucianoluzzi.firebase_test.domain.model.ConsumeProductResult
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -23,10 +24,25 @@ suspend fun BillingClient.connect(): Boolean {
     }
 }
 
-suspend fun BillingClient.getProducts(params: SkuDetailsParams): List<SkuDetails>? {
+suspend fun BillingClient.getProducts(billingClient:BillingClient): List<ProductDetails>? {
     return suspendCancellableCoroutine { continuation ->
-        querySkuDetailsAsync(params) { _, products ->
-            continuation.resume(products)
+
+        val queryProductDetailsParams =
+            QueryProductDetailsParams.newBuilder()
+                .setProductList(
+                    ImmutableList.of(
+                        QueryProductDetailsParams.Product.newBuilder()
+                            .setProductId("premium_access")
+                            .setProductType(BillingClient.ProductType.SUBS)
+                            .build()))
+                .build()
+
+        billingClient.queryProductDetailsAsync(queryProductDetailsParams) {
+                billingResult,
+                productDetailsList ->
+            // check billingResult
+            // process returned productDetailsList
+            continuation.resume(productDetailsList)
         }
     }
 }

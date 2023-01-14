@@ -118,15 +118,13 @@ dependencies {
     implementation 'com.applovin.mediation:facebook-adapter:6.11.0.5'
 
 
-//    def billing_version = "5.1.0"
-//
-//    implementation "com.android.billingclient:billing:$billing_version"
+    def billing_version = "5.1.0"
+    implementation "com.android.billingclient:billing:$billing_version"
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
     implementation 'com.google.guava:guava:24.1-jre'
 
-    def billing_version = "3.0.2"
-
-    implementation "com.android.billingclient:billing-ktx:$billing_version"
+//    def billing_version = "3.0.2"
+//    implementation "com.android.billingclient:billing-ktx:$billing_version"
 
 
     //implementation "org.koin:koin-core:$koin_version"

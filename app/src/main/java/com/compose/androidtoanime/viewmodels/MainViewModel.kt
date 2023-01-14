@@ -2,7 +2,6 @@ package com.compose.androidtoanime.viewmodels
 
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.os.Build
@@ -16,7 +15,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.android.billingclient.api.*
+import com.android.billingclient.api.AcknowledgePurchaseParams
+import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.Purchase
 import com.compose.androidtoanime.BuildConfig
 import com.compose.androidtoanime.RepositoryImpl
 import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_BILLING
@@ -35,7 +36,6 @@ import com.compose.androidtoanime.data.AdProvider.Companion.OpenAd
 import com.compose.androidtoanime.data.AdProvider.Companion.Rewarded
 import com.compose.androidtoanime.data.Ads
 import com.compose.androidtoanime.data.ResponsePhoto
-import com.google.common.collect.ImmutableList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,7 +64,6 @@ class MainViewModel @Inject constructor(
 
     private val _purchasedSubscriptionsLiveData = MutableLiveData<List<Purchase>?>()
     val purchasedSubscriptionsLiveData: LiveData<List<Purchase>?> = _purchasedSubscriptionsLiveData
-
 
 
     //premium
@@ -176,15 +175,6 @@ class MainViewModel @Inject constructor(
     }
 
 
-    //premium
-    val TAG = "Qonv"
-
-
-    init {
-
-    }
-
-
 //    val productList = mutableListOf<QueryProductDetailsParams.Product>()
 //
 //    fun startBillingConnection(context: Context,billingClient: BillingClient) {
@@ -284,11 +274,11 @@ class MainViewModel @Inject constructor(
 //        billingClient.launchBillingFlow(activity, billingFlowParams)
 //    }
 
-    fun endConnection(billingClient:BillingClient) {
+    fun endConnection(billingClient: BillingClient) {
         billingClient.endConnection()
     }
 
-    fun verifySubPurchase(purchases: Purchase,billingClient: BillingClient,context: Context) {
+    fun verifySubPurchase(purchases: Purchase, billingClient: BillingClient, context: Context) {
         val acknowledgePurchaseParams = AcknowledgePurchaseParams
             .newBuilder()
             .setPurchaseToken(purchases.purchaseToken)
@@ -301,7 +291,7 @@ class MainViewModel @Inject constructor(
                 //Setting premium to 1
                 // 1 - premium
                 // 0 - no premium
-               // prefs.setPremium(1)
+                // prefs.setPremium(1)
             }
         }
         Log.d(TAG_BILLING, "Purchase Token: " + purchases.purchaseToken)

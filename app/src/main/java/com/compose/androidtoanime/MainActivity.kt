@@ -25,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
-import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.PurchasesUpdatedListener
 import com.compose.androidtoanime.Utils.AppUtils.Companion.ENABLE_PREMIUM
 import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_BILLING
@@ -35,6 +34,7 @@ import com.compose.androidtoanime.screens.MyNavigationDrawer
 import com.compose.androidtoanime.screens.Premium
 import com.compose.androidtoanime.ui.theme.AndroidToAnimeTheme
 import com.compose.androidtoanime.viewmodels.MainViewModel
+import com.compose.androidtoanime.viewmodels.PricingViewModel
 import com.wishes.jetpackcompose.runtime.NavigationHost
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -48,27 +48,13 @@ class MainActivity : ComponentActivity() {
             AndroidToAnimeTheme {
 
                 val viewModel: MainViewModel = hiltViewModel()
+                val pricingViewModel: PricingViewModel = hiltViewModel()
                 val navController = rememberNavController()
                 val context = LocalContext.current
-                val purchasesUpdatedListener =
-                    PurchasesUpdatedListener { billingResult, purchases ->
-                        Log.d(TAG_BILLING,billingResult.debugMessage)
-                        Log.d(TAG_BILLING,"-----------")
-                        Log.d(TAG_BILLING,purchases.toString())
-                        //viewModel.verifySubPurchase(purchases!![0],billingClient, context = context)
-                    }
-//                var billingClient = BillingClient.newBuilder(context)
-//                    .setListener(purchasesUpdatedListener)
-//                    .enablePendingPurchases()
-//                    .build()
-//
-//
-//                viewModel.startBillingConnection(context, billingClient)
 
 
-                // A surface container using the 'background' color from the theme
-                //create animations
-                //var navigateClick by remember { mutableStateOf(false) }
+                pricingViewModel.getProducts()
+                pricingViewModel.listener()
 
                 val offSetAnim by animateDpAsState(
                     targetValue = if (viewModel.navigateClick) 300.dp else 0.dp,
@@ -111,17 +97,8 @@ class MainActivity : ComponentActivity() {
                         viewModel.openPremium = false
                     },
                         purchase = {
-                            Toast.makeText(context, "offer", Toast.LENGTH_SHORT).show()
-                            //viewModel.purchase((context as Activity))
-
-                            //viewModel.launchBillingFlow((context as Activity))
-//                            val productDetails = viewModel.productDetails
-//                            if (productDetails != null)
-//                                viewModel.makePurchase(
-//                                    billingClient,
-//                                    productDetails!!,
-//                                    (context as Activity)
-//                                )
+                            //Toast.makeText(context, "offer", Toast.LENGTH_SHORT).show()
+                            pricingViewModel.makePurchase((context as Activity))
                         }
                     )
 

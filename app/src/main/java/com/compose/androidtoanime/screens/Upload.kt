@@ -143,7 +143,8 @@ fun Upload(navController: NavHostController, viewModel: MainViewModel) {
                 //navController.navigate(NavRoutes.Share.route)
             }
             is NetworkResults.Error -> {
-                Toast.makeText(context, context.getString(R.string.try_later), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.try_later), Toast.LENGTH_SHORT)
+                    .show()
                 viewModel.readyImage = NetworkResults.NotYet()
             }
             is NetworkResults.Loading -> {

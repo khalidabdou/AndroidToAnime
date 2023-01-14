@@ -40,7 +40,7 @@ fun MyPhotos(viewModel: MainViewModel) {
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
-        Log.d("database","--")
+        Log.d("database", "--")
         viewModel.getPhotos()
         showInterstitialAfterClick(context)
     }
@@ -108,14 +108,15 @@ fun MyPhotoItem(url: String, context: Context, onDelete: () -> Unit) {
                 painter = painterResource(id = R.drawable.share),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(27.dp).padding(6.dp)
+                    .size(27.dp)
+                    .padding(6.dp)
                     .clickable {
                         myExecutor.execute {
                             val mImage = AppUtils.toBitmap(context, url)
                             myHandler.post {
                                 //mImageView.setImageBitmap(mImage)
                                 if (mImage != null) {
-                                    AppUtils.sharePalette(context, mImage,null)
+                                    AppUtils.sharePalette(context, mImage, null)
                                 }
                             }
                         }
@@ -126,7 +127,8 @@ fun MyPhotoItem(url: String, context: Context, onDelete: () -> Unit) {
                 painter = painterResource(id = R.drawable.download),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(27.dp).padding(2.dp)
+                    .size(27.dp)
+                    .padding(2.dp)
                     .clickable
                     {
                         showInterstitialAfterClick(context)
@@ -147,7 +149,8 @@ fun MyPhotoItem(url: String, context: Context, onDelete: () -> Unit) {
                 painter = painterResource(id = R.drawable.delete),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(27.dp).padding(6.dp)
+                    .size(27.dp)
+                    .padding(6.dp)
                     .clickable
                     {
                         showInterstitialAfterClick(context)

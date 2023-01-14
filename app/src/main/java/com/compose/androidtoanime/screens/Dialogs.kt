@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import kotlin.random.Random
 import com.compose.androidtoanime.R
 import com.compose.androidtoanime.Utils.AppUtils
 
@@ -66,7 +65,7 @@ fun DialogExit(context: Context, onDismiss: () -> Unit) {
             Button(onClick = {
                 (context as Activity).finish()
             }) {
-                Text(text =  context.getString(R.string.exit))
+                Text(text = context.getString(R.string.exit))
             }
         },
     )
@@ -115,7 +114,7 @@ fun HowToUse(context: Context, onDismiss: () -> Unit) {
 
 
 @Composable
-fun Premium(close: () -> Unit,purchase:()->Unit) {
+fun Premium(close: () -> Unit, purchase: () -> Unit) {
     Dialog(
         onDismissRequest = { /*TODO*/ },
         properties = DialogProperties(

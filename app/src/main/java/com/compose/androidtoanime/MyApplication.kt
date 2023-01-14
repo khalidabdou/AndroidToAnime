@@ -32,7 +32,6 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks, Lif
     }
 
 
-
     override fun onCreate() {
         super.onCreate()
 
@@ -43,11 +42,9 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks, Lif
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         appOpenAdManager = AppOpenAdManager()
         AdSettings.addTestDevice("2fc9747b-b77b-4c23-9ae0-53c42d39afbd")
-        AppLovinSdk.getInstance( this ).setMediationProvider( "max" )
-        AppLovinSdk.getInstance( this ).initializeSdk({ configuration: AppLovinSdkConfiguration ->
+        AppLovinSdk.getInstance(this).setMediationProvider("max")
+        AppLovinSdk.getInstance(this).initializeSdk({ configuration: AppLovinSdkConfiguration ->
         })
-
-
 
 
     }

@@ -8,24 +8,23 @@ import com.compose.androidtoanime.screens.*
 import com.compose.androidtoanime.viewmodels.MainViewModel
 
 
-
 @Composable
-fun NavigationHost(navController: NavHostController,viewModel: MainViewModel) {
+fun NavigationHost(navController: NavHostController, viewModel: MainViewModel) {
 
     NavHost(
         navController = navController,
         startDestination = NavRoutes.Splash.route,
     ) {
         composable(NavRoutes.Splash.route) {
-            Splash(navController,viewModel)
+            Splash(navController, viewModel)
         }
 
         composable(NavRoutes.Home.route) {
-            Home(navController,viewModel)
+            Home(navController, viewModel)
         }
 
         composable(NavRoutes.Upload.route) {
-            Upload(navController,viewModel)
+            Upload(navController, viewModel)
         }
 
         composable(NavRoutes.Share.route) {

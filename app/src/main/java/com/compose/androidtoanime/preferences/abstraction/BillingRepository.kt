@@ -1,7 +1,9 @@
 package com.compose.androidtoanime.preferences.abstraction
 
-import com.android.billingclient.api.*
-import com.lucianoluzzi.firebase_test.domain.model.ConsumeProductResult
+import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.SkuDetails
 
 interface BillingRepository {
 

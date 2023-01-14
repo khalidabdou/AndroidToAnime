@@ -60,7 +60,7 @@ fun Splash(navController: NavHostController, viewModel: MainViewModel) {
         }
     }
 
-    MSplash(alpha = alphaAnim.value,)
+    MSplash(alpha = alphaAnim.value)
 }
 
 @Composable
@@ -73,7 +73,8 @@ fun MSplash(alpha: Float) {
 
     ) {
         Image(
-            modifier = Modifier.size(90.dp)
+            modifier = Modifier
+                .size(90.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .alpha(alpha),
             painter = painterResource(id = R.drawable.magic),

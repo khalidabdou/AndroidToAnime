@@ -27,16 +27,17 @@ import java.util.concurrent.Executors
 @Composable
 fun Share(viewModel: MainViewModel) {
 
-    val context= LocalContext.current
+    val context = LocalContext.current
     val myExecutor = Executors.newSingleThreadExecutor()
     val myHandler = Handler(Looper.getMainLooper())
 
     Column() {
-        Box(modifier  = Modifier
-            .fillMaxSize()
-            .weight(1f),
-        contentAlignment = Alignment.Center
-        ){
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f),
+            contentAlignment = Alignment.Center
+        ) {
             //LoadingAnimation1()
             SubcomposeAsyncImage(
                 model = viewModel.getUrl(),
@@ -57,11 +58,11 @@ fun Share(viewModel: MainViewModel) {
             ) {
                 showInterstitialAfterClick(context)
                 myExecutor.execute {
-                    val mImage = toBitmap(context,viewModel.getUrl())
+                    val mImage = toBitmap(context, viewModel.getUrl())
                     myHandler.post {
                         //mImageView.setImageBitmap(mImage)
-                        if(mImage!=null){
-                            saveImage(context,mImage)
+                        if (mImage != null) {
+                            saveImage(context, mImage)
                         }
                     }
                 }
@@ -73,11 +74,11 @@ fun Share(viewModel: MainViewModel) {
             ) {
                 showInterstitialAfterClick(context)
                 myExecutor.execute {
-                    val mImage = toBitmap(context,viewModel.getUrl())
+                    val mImage = toBitmap(context, viewModel.getUrl())
                     myHandler.post {
                         //mImageView.setImageBitmap(mImage)
-                        if(mImage!=null){
-                            sharePalette(context,mImage,null)
+                        if (mImage != null) {
+                            sharePalette(context, mImage, null)
                         }
                     }
                 }
@@ -89,11 +90,11 @@ fun Share(viewModel: MainViewModel) {
             ) {
                 showInterstitialAfterClick(context)
                 myExecutor.execute {
-                    val mImage = toBitmap(context,viewModel.getUrl())
+                    val mImage = toBitmap(context, viewModel.getUrl())
                     myHandler.post {
                         //mImageView.setImageBitmap(mImage)
-                        if(mImage!=null){
-                            sharePalette(context,mImage,"")
+                        if (mImage != null) {
+                            sharePalette(context, mImage, "")
                         }
                     }
                 }

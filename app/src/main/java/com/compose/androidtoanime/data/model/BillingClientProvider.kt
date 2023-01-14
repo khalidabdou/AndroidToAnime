@@ -3,16 +3,17 @@ package com.compose.androidtoanime.data.model
 import android.content.Context
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.PurchasesUpdatedListener
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.compose.androidtoanime.data.BillingUpdateListener
 import javax.inject.Inject
 
+
 class BillingClientProvider @Inject constructor(
-     context: Context,
-    updateListener: PurchasesUpdatedListener
+    context: Context,
+     billingUpdateListener: BillingUpdateListener
 ) {
-    val billingClient = BillingClient
-        .newBuilder(context)
+
+    var billingClient = BillingClient.newBuilder(context)
+        .setListener(billingUpdateListener)
         .enablePendingPurchases()
-        .setListener(updateListener)
         .build()
 }

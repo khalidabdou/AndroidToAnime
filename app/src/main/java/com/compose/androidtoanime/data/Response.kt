@@ -8,12 +8,11 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 
-
 @Parcelize
 @Entity(tableName = TABLE_IMAGE)
 data class ResponsePhoto(
     @PrimaryKey(autoGenerate = true)
-    val id :Int,
+    val id: Int,
     @SerializedName("folder")
     val folder: String,
     @SerializedName("filename")

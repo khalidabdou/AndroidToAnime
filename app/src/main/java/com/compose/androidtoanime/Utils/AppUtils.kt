@@ -25,15 +25,13 @@ class AppUtils {
 
     companion object {
         val TAG_D = "debug_response"
-        val TAG_BILLING="debug_billing => "
+        val TAG_BILLING = "debug_billing => "
         const val TABLE_IMAGE = "table_photos"
         const val DATABASE_NAME = "db_name"
         val applovinClass = applovin()
         const val MAX_PHOTO = 200
         const val ENABLE_PREMIUM = true
         lateinit var bitmap: Bitmap
-
-
 
 
         fun share(context: Context) {
@@ -186,7 +184,7 @@ class AppUtils {
             return null
         }
 
-        fun sharePalette(context: Context, bitmap: Bitmap,packageIntent: String?) {
+        fun sharePalette(context: Context, bitmap: Bitmap, packageIntent: String?) {
             val bitmapPath = MediaStore.Images.Media.insertImage(
                 context.contentResolver,
                 bitmap,
@@ -195,11 +193,13 @@ class AppUtils {
             )
             val bitmapUri = Uri.parse(bitmapPath)
             val intent = Intent(Intent.ACTION_SEND)
-            if (packageIntent!=null)
+            if (packageIntent != null)
                 intent.setPackage("com.whatsapp");
             intent.type = "image/png"
-           intent.putExtra(Intent.EXTRA_TEXT,"${context.getString(R.string.send_to)} \n" +
-                   " https://play.google.com/store/apps/details?id=${context.packageName}")
+            intent.putExtra(
+                Intent.EXTRA_TEXT, "${context.getString(R.string.send_to)} \n" +
+                        " https://play.google.com/store/apps/details?id=${context.packageName}"
+            )
             intent.putExtra(Intent.EXTRA_STREAM, bitmapUri)
             context.startActivity(Intent.createChooser(intent, "Share"))
         }
@@ -243,7 +243,7 @@ class AppUtils {
             }
         }
 
-        fun openStore(url: String,context: Context) {
+        fun openStore(url: String, context: Context) {
             try {
                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
             } catch (e: ActivityNotFoundException) {

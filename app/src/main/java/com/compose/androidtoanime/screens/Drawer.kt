@@ -45,7 +45,7 @@ fun MyNavigationDrawer(onClick: () -> Unit) {
                         MaterialTheme.colorScheme.background.copy(0.9f),
                         MaterialTheme.colorScheme.primary.copy(0.6f),
                         MaterialTheme.colorScheme.primary.copy(0.7f),
-                        )
+                    )
                 )
             ),
     ) {
