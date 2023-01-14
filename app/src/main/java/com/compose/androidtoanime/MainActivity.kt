@@ -2,8 +2,6 @@ package com.compose.androidtoanime
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateDpAsState
@@ -25,9 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
-import com.android.billingclient.api.PurchasesUpdatedListener
 import com.compose.androidtoanime.Utils.AppUtils.Companion.ENABLE_PREMIUM
-import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_BILLING
 import com.compose.androidtoanime.screens.DialogExit
 import com.compose.androidtoanime.screens.HowToUse
 import com.compose.androidtoanime.screens.MyNavigationDrawer
@@ -98,6 +94,7 @@ class MainActivity : ComponentActivity() {
                     },
                         purchase = {
                             //Toast.makeText(context, "offer", Toast.LENGTH_SHORT).show()
+                            pricingViewModel.ask()
                             pricingViewModel.makePurchase((context as Activity))
                         }
                     )
