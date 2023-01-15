@@ -8,6 +8,7 @@ import com.lucianoluzzi.firebase_test.domain.model.ConsumeProductResult
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
+
 suspend fun BillingClient.connect(): Boolean {
     return suspendCancellableCoroutine { continuation ->
         startConnection(object : BillingClientStateListener {
@@ -20,17 +21,38 @@ suspend fun BillingClient.connect(): Boolean {
             }
 
             override fun onBillingServiceDisconnected() {
-
-                continuation.resume(false)
+                Log.d(TAG_BILLING, "onBillingServiceDisconnected")
+                //continuation.resume(false)
             }
         })
     }
 }
 
+fun BillingClient.startBillingConnection() {
+    this.startConnection(object : BillingClientStateListener {
+        override fun onBillingSetupFinished(billingResult: BillingResult) {
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+
+                Log.d(TAG_BILLING, billingResult.responseCode.toString())
+                Log.d(TAG_BILLING, "Billing response OK")
+
+
+            } else {
+                Log.d(TAG_BILLING, "Billing response OK 2")
+                Log.e(TAG_BILLING, billingResult.debugMessage)
+            }
+        }
+
+        override fun onBillingServiceDisconnected() {
+            Log.i(TAG_BILLING, "Billing connection disconnected")
+            startBillingConnection()
+        }
+    })
+}
+
 
 suspend fun BillingClient.acknowledgePurchase(
     purchase: Purchase,
-    billingClient: BillingClient
 ): Boolean? {
 
     return suspendCancellableCoroutine { continuation ->
@@ -93,5 +115,20 @@ suspend fun BillingClient.consumeProduct(consumeParams: ConsumeParams): ConsumeP
             )
         }
     }
+}
+
+suspend fun BillingClient.checkSubscription(): List<Purchase>? {
+    return suspendCancellableCoroutine { continuation ->
+        this.queryPurchasesAsync(
+            QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build()
+        ) { billingResult1, purchaseList ->
+            if (billingResult1.getResponseCode() === BillingClient.BillingResponseCode.OK) {
+                continuation.resume(purchaseList)
+            } else
+                continuation.resume(null)
+        }
+    }
+
+
 }
 

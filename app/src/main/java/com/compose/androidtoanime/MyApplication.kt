@@ -17,6 +17,7 @@ import com.google.android.gms.ads.appopen.AppOpenAd
 import com.google.firebase.FirebaseApp
 
 
+
 import dagger.hilt.android.HiltAndroidApp
 import java.util.*
 
@@ -35,6 +36,7 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks, Lif
     override fun onCreate() {
         super.onCreate()
 
+
         FirebaseApp.initializeApp(this)
 
         registerActivityLifecycleCallbacks(this)
@@ -45,7 +47,6 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks, Lif
         AppLovinSdk.getInstance(this).setMediationProvider("max")
         AppLovinSdk.getInstance(this).initializeSdk({ configuration: AppLovinSdkConfiguration ->
         })
-
 
     }
 

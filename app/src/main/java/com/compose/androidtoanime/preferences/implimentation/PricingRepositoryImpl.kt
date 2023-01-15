@@ -3,11 +3,8 @@ package com.compose.androidtoanime.preferences.implimentation
 import android.app.Activity
 import android.util.Log
 import com.android.billingclient.api.*
+import com.compose.androidtoanime.Utils.*
 import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_BILLING
-import com.compose.androidtoanime.Utils.acknowledgePurchase
-import com.compose.androidtoanime.Utils.connect
-import com.compose.androidtoanime.Utils.consumeProduct
-import com.compose.androidtoanime.Utils.getProducts
 import com.compose.androidtoanime.data.BillingUpdateListener
 import com.compose.androidtoanime.data.model.BillingClientProvider
 import com.compose.androidtoanime.preferences.abstraction.PricingRepository
@@ -40,7 +37,11 @@ class PricingRepositoryImpl @Inject constructor(
     }
 
     private suspend fun connectIfNeeded(): Boolean {
-        return billingClient.isReady || billingClient.connect()
+        return if (!billingClient.isReady){
+            billingClient.startBillingConnection()
+            false
+        }else
+            true
     }
 
     override suspend fun consumeProduct(consumeParams: ConsumeParams): ConsumeProductResult =
@@ -54,7 +55,7 @@ class PricingRepositoryImpl @Inject constructor(
         val connectIfNeeded = connectIfNeeded()
         if (!connectIfNeeded)
             return null
-        return billingClient.acknowledgePurchase(purchase, billingClient)
+        return billingClient.acknowledgePurchase(purchase)
     }
 
 
@@ -104,5 +105,11 @@ class PricingRepositoryImpl @Inject constructor(
         }
         return billingResult1
     }
+
+    override suspend fun checkSubscription(): List<Purchase>? {
+        return billingClient.checkSubscription()
+    }
+
+
 
 }

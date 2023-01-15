@@ -16,4 +16,6 @@ interface PricingRepository {
     fun getBillingUpdateListener(): BillingUpdateListener
 
     suspend fun acknowledgePurchase(purchase: Purchase?): BillingResult?
+
+    suspend fun checkSubscription():List<Purchase>?
 }

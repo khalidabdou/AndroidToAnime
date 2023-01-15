@@ -2,7 +2,6 @@ package com.compose.androidtoanime
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
-import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_BILLING
 import com.compose.androidtoanime.screens.DialogExit
 import com.compose.androidtoanime.screens.HowToUse
 import com.compose.androidtoanime.screens.MyNavigationDrawer
@@ -50,15 +49,16 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val context = LocalContext.current
 
+                //pricingViewModel.getProducts()
 
-                pricingViewModel.getProducts()
+                LaunchedEffect(pricingViewModel.purchaes.value) {
+                    if (!pricingViewModel.purchaes.value.isNullOrEmpty()){
+                        pricingViewModel.savePurchase(pricingViewModel.purchaes.value!![0])
+                        pricingViewModel.verifySubPurchase(pricingViewModel.purchaes.value!![0])
+                    }
 
-                if (pricingViewModel.purches.value.isNullOrEmpty()) {
-                    Log.d(TAG_BILLING, "null")
-                } else {
-                    pricingViewModel.savePurchase(pricingViewModel.purches.value!![0])
-                    Log.d(TAG_BILLING, "purssss==== ${pricingViewModel.purches.value}")
                 }
+
 
                 val offSetAnim by animateDpAsState(
                     targetValue = if (viewModel.navigateClick) 300.dp else 0.dp,
@@ -89,24 +89,29 @@ class MainActivity : ComponentActivity() {
                         .rotate(rotate)
                         .clip(RoundedCornerShape(clipDp))
                 ) {
-                    if (pricingViewModel.isSubscribe.value)
-                        Toast.makeText(context, "subbbbbbb", Toast.LENGTH_LONG).show()
-                    else
-                        Toast.makeText(context, "noooo", Toast.LENGTH_LONG).show()
-                    pricingViewModel.handlePurchase()
+                    //pricingViewModel.handlePurchase()
                     //viewModel.getProducts(context)
-                    NavigationHost(navController = navController, viewModel)
+                    //pricingViewModel.handlePurchase()
+                    Toast.makeText(
+                        context,
+                        pricingViewModel.isSubscribe.value.toString(),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    NavigationHost(navController = navController, viewModel, pricingViewModel = pricingViewModel)
                 }
 
                 //Splash(navController,viewModel)
 
                 if (viewModel.openPremium)
-                    Premium(close = {
+                    Premium(enable = !pricingViewModel.isSubscribe.value, close = {
                         viewModel.openPremium = false
                     },
                         purchase = {
-
-                            pricingViewModel.makePurchase((context as Activity))
+                            //pricingViewModel.checkSubscription()
+                            pricingViewModel.makePurchase(
+                                (context as Activity)
+                            )
+                            //pricingViewModel.makePurchase((context as Activity))
                         }
                     )
 

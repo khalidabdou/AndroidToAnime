@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import com.compose.androidtoanime.R
 import com.compose.androidtoanime.Utils.NetworkResults
 import com.compose.androidtoanime.viewmodels.MainViewModel
+import com.compose.androidtoanime.viewmodels.PricingViewModel
 
 import com.wishes.jetpackcompose.runtime.NavRoutes
 
@@ -28,7 +29,11 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun Splash(navController: NavHostController, viewModel: MainViewModel) {
+fun Splash(
+    navController: NavHostController,
+    viewModel: MainViewModel,
+    pricingViewModel: PricingViewModel
+) {
     val context = LocalContext.current
     var startAnimation by remember { mutableStateOf(false) }
 
@@ -38,6 +43,10 @@ fun Splash(navController: NavHostController, viewModel: MainViewModel) {
             durationMillis = 3000
         )
     )
+
+    if (pricingViewModel.productList.isEmpty()) {
+        pricingViewModel.getProducts()
+    }
 
 
     if (viewModel.infos.value is NetworkResults.Loading) {

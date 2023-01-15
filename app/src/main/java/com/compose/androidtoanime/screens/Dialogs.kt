@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -112,72 +113,109 @@ fun HowToUse(context: Context, onDismiss: () -> Unit) {
     )
 }
 
+@Preview
+@Composable
+fun forpremium() {
+    Premium(close = {}, purchase = {})
+}
 
 @Composable
-fun Premium(close: () -> Unit, purchase: () -> Unit) {
+fun Premium(enable: Boolean = true, close: () -> Unit, purchase: () -> Unit) {
     Dialog(
-        onDismissRequest = { /*TODO*/ },
+        onDismissRequest = {
+            close()
+        },
         properties = DialogProperties(
             dismissOnClickOutside = true,
             dismissOnBackPress = true,
         ),
     ) {
         Box(contentAlignment = Alignment.TopCenter) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(350.dp)
-                    .padding(top = 50.dp, start = 6.dp, end = 6.dp)
-                    .clip(RoundedCornerShape(30.dp))
-                    .background(Color.White)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+            if (!enable) {
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 30.dp, bottom = 15.dp)
+                        .height(350.dp)
+                        .padding(top = 50.dp, start = 6.dp, end = 6.dp)
+                        .clip(RoundedCornerShape(30.dp))
+                        .background(Color.White),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Spacer(modifier = Modifier.height(80.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.firework),
+                        contentDescription = null,
+                        modifier = Modifier.size(100.dp)
+                    )
                     Text(
-                        text = "Subscription",
+                        text = "You Have Subscribed",
                         style = MaterialTheme.typography.titleLarge,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
                     )
-                    Icon(Icons.Default.Close, contentDescription = null,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .padding(10.dp)
-                            .clickable {
-                                close()
-                            }
-                    )
                 }
 
-                itemSub("Unlimited")
-                itemSub("Remove Ads")
-                itemSub("High Quality")
-                itemSub("Speed Converting")
-
-                Spacer(modifier = Modifier.weight(1f))
-                Button(
+            } else
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColorFor(
-                            backgroundColor = MaterialTheme.colorScheme.primary,
+                        .height(350.dp)
+                        .padding(top = 50.dp, start = 6.dp, end = 6.dp)
+                        .clip(RoundedCornerShape(30.dp))
+                        .background(Color.White)
+                ) {
 
-                            ),
-                    ),
-                    onClick = {
-                        purchase()
-                    }) {
-                    Text(text = "Buy Now 4,99$/mo")
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 30.dp, bottom = 15.dp)
+                    ) {
+                        Text(
+                            text = "Subscription",
+                            style = MaterialTheme.typography.titleLarge,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        )
+                        Icon(Icons.Default.Close, contentDescription = null,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .padding(10.dp)
+                                .clickable {
+                                    close()
+                                }
+                        )
+                    }
+
+                    itemSub("Unlimited")
+                    itemSub("Remove Ads")
+                    itemSub("High Quality")
+                    itemSub("Speed Converting")
+
+                    Spacer(modifier = Modifier.weight(1f))
+                    Button(
+                        enabled = enable,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColorFor(
+                                backgroundColor = MaterialTheme.colorScheme.primary,
+
+                                ),
+                        ),
+                        onClick = {
+                            purchase()
+                        }) {
+                        Text(text = "Buy Now 4,99$/mo")
+                    }
                 }
-            }
             Image(
                 painter = painterResource(id = R.drawable.diamond),
                 contentDescription = null,
