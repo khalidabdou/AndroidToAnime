@@ -1,8 +1,9 @@
 package com.wishes.jetpackcompose.preferences.abstraction
 
+import com.android.billingclient.api.Purchase
+
 interface DataRepository {
-    suspend fun putSub(key: String, value: String)
-    suspend fun putInt(key: String, value: Int)
-    suspend fun getSub(key: String): String?
-    suspend fun getInt(key: String): Int?
+    suspend fun savePurchase(key: String, value: Purchase)
+    suspend fun getPurchase(key: String): String?
+
 }

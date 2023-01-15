@@ -8,9 +8,8 @@ import javax.inject.Inject
 
 class BillingClientProvider @Inject constructor(
     context: Context,
-    billingUpdateListener: BillingUpdateListener
+    var billingUpdateListener: BillingUpdateListener
 ) {
-    var billingUpdateListener = billingUpdateListener
     var billingClient = BillingClient.newBuilder(context)
         .setListener(billingUpdateListener)
         .enablePendingPurchases()

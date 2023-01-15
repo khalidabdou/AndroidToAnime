@@ -4,6 +4,7 @@ import android.app.Activity
 import android.util.Log
 import com.android.billingclient.api.*
 import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_BILLING
+import com.compose.androidtoanime.Utils.acknowledgePurchase
 import com.compose.androidtoanime.Utils.connect
 import com.compose.androidtoanime.Utils.consumeProduct
 import com.compose.androidtoanime.Utils.getProducts
@@ -16,10 +17,9 @@ import javax.inject.Inject
 
 
 class PricingRepositoryImpl @Inject constructor(
-    billingClientProvider: BillingClientProvider
+    private val billingClientProvider: BillingClientProvider
 ) : PricingRepository {
 
-    private val billingClientProvider = billingClientProvider
     private val billingClient = billingClientProvider.billingClient
 
 
@@ -47,8 +47,16 @@ class PricingRepositoryImpl @Inject constructor(
         billingClient.consumeProduct(consumeParams)
 
 
-//    override suspend fun acknowledgePurchase(acknowledgePurchaseParams: AcknowledgePurchaseParams): BillingResult =
-//        billingClient.acknowledgePurchase(acknowledgePurchaseParams)
+    override suspend fun acknowledgePurchase(
+        purchase: Purchase,
+        billingClient: BillingClient
+    ): Boolean? {
+        val connectIfNeeded = connectIfNeeded()
+        if (!connectIfNeeded)
+            return null
+        return billingClient.acknowledgePurchase(purchase, billingClient)
+    }
+
 
     override fun getBillingClient() = billingClient
 
@@ -86,10 +94,11 @@ class PricingRepositoryImpl @Inject constructor(
                     if (billingResult.responseCode == BillingClient.BillingResponseCode.OK &&
                         it.purchaseState == Purchase.PurchaseState.PURCHASED
                     ) {
-                        Log.d(TAG_BILLING, "true " + it.toString())
+                        Log.d(TAG_BILLING, "true " + billingResult.toString())
                         billingResult1 = billingResult
+                    } else {
+                        Log.d(TAG_BILLING, "false " + billingResult.toString())
                     }
-                    Log.d(TAG_BILLING, "false " + it.toString())
                 }
             }
         }

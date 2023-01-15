@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.compose.androidtoanime.TopBar
-import com.compose.androidtoanime.Utils.AppUtils.Companion.share
 import com.compose.androidtoanime.viewmodels.MainViewModel
 import com.ringtones.compose.feature.admob.AdvertViewAdmob
 import com.wishes.jetpackcompose.runtime.NavRoutes
@@ -22,18 +21,15 @@ fun Home(navController: NavHostController, viewModel: MainViewModel) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopBar(myphoto = {
-                navController.navigate(NavRoutes.MyPhotos.route)
-            },
-                share = {
-                    share(context)
-                }, drawer = {
+            TopBar(
+                myphoto = {
+                    navController.navigate(NavRoutes.MyPhotos.route)
+                },
+                drawer = {
                     viewModel.navigateClick = true
                 },
-                how = {
-                    viewModel.openHow = true
-                }
-            ) {
+
+                ) {
                 viewModel.openPremium = true
             }
         },

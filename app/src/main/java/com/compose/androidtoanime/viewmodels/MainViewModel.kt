@@ -12,8 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
@@ -62,11 +60,6 @@ class MainViewModel @Inject constructor(
     var readyImage by mutableStateOf<NetworkResults<ResponsePhoto>?>(NetworkResults.NotYet())
     val infos = mutableStateOf<NetworkResults<Ads>>(NetworkResults.Loading())
 
-    private val _purchasedSubscriptionsLiveData = MutableLiveData<List<Purchase>?>()
-    val purchasedSubscriptionsLiveData: LiveData<List<Purchase>?> = _purchasedSubscriptionsLiveData
-
-
-    //premium
 
     //variables
     var openPremium by mutableStateOf(false)

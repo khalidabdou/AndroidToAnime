@@ -10,7 +10,7 @@ interface PricingRepository {
     suspend fun getProducts(billingClient: BillingClient): List<ProductDetails>?
     suspend fun consumeProduct(consumeParams: ConsumeParams): ConsumeProductResult
 
-    //suspend fun acknowledgePurchase(acknowledgePurchaseParams: AcknowledgePurchaseParams): BillingResult
+    suspend fun acknowledgePurchase(purchase: Purchase, billingClient: BillingClient): Boolean?
     fun getBillingClient(): BillingClient
     fun makePurchase(activity: Activity, productDetails: ProductDetails)
     fun getBillingUpdateListener(): BillingUpdateListener

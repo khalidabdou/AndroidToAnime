@@ -2,6 +2,8 @@ package com.compose.androidtoanime
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateDpAsState
@@ -23,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
-import com.compose.androidtoanime.Utils.AppUtils.Companion.ENABLE_PREMIUM
+import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_BILLING
 import com.compose.androidtoanime.screens.DialogExit
 import com.compose.androidtoanime.screens.HowToUse
 import com.compose.androidtoanime.screens.MyNavigationDrawer
@@ -37,7 +39,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -50,7 +52,13 @@ class MainActivity : ComponentActivity() {
 
 
                 pricingViewModel.getProducts()
-                pricingViewModel.listener()
+
+                if (pricingViewModel.purches.value.isNullOrEmpty()) {
+                    Log.d(TAG_BILLING, "null")
+                } else {
+                    pricingViewModel.savePurchase(pricingViewModel.purches.value!![0])
+                    Log.d(TAG_BILLING, "purssss==== ${pricingViewModel.purches.value}")
+                }
 
                 val offSetAnim by animateDpAsState(
                     targetValue = if (viewModel.navigateClick) 300.dp else 0.dp,
@@ -81,7 +89,11 @@ class MainActivity : ComponentActivity() {
                         .rotate(rotate)
                         .clip(RoundedCornerShape(clipDp))
                 ) {
-
+                    if (pricingViewModel.isSubscribe.value)
+                        Toast.makeText(context, "subbbbbbb", Toast.LENGTH_LONG).show()
+                    else
+                        Toast.makeText(context, "noooo", Toast.LENGTH_LONG).show()
+                    pricingViewModel.handlePurchase()
                     //viewModel.getProducts(context)
                     NavigationHost(navController = navController, viewModel)
                 }
@@ -93,8 +105,7 @@ class MainActivity : ComponentActivity() {
                         viewModel.openPremium = false
                     },
                         purchase = {
-                            //Toast.makeText(context, "offer", Toast.LENGTH_SHORT).show()
-                            pricingViewModel.ask()
+
                             pricingViewModel.makePurchase((context as Activity))
                         }
                     )
@@ -118,10 +129,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TopBar(
     myphoto: () -> Unit,
-    how: () -> Unit,
     drawer: () -> Unit,
-    share: () -> Unit,
-    open: () -> Unit
+    open: () -> Unit,
 ) {
     TopAppBar(
         title = {
@@ -146,18 +155,18 @@ fun TopBar(
             Spacer(modifier = Modifier.width(3.dp))
         },
         actions = {
-            if (ENABLE_PREMIUM)
-                Icon(
-                    painter = painterResource(id = R.drawable.premium),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier
-                        .size(27.dp)
-                        .padding(2.dp)
-                        .clickable {
-                            open()
-                        }
-                )
+
+            Icon(
+                painter = painterResource(id = R.drawable.premium),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .size(27.dp)
+                    .padding(2.dp)
+                    .clickable {
+                        open()
+                    }
+            )
 
             Spacer(modifier = Modifier.width(3.dp))
             Icon(
