@@ -86,7 +86,7 @@ suspend fun BillingClient.getProducts(billingClient: BillingClient): List<Produc
                 .setProductList(
                     ImmutableList.of(
                         QueryProductDetailsParams.Product.newBuilder()
-                            .setProductId("premium_access")
+                            .setProductId("premium_monthly")
                             .setProductType(BillingClient.ProductType.SUBS)
                             .build()))
                 .build()
@@ -96,7 +96,7 @@ suspend fun BillingClient.getProducts(billingClient: BillingClient): List<Produc
                 productDetailsList ->
             // check billingResult
             // process returned productDetailsList
-            Log.d(TAG_BILLING, "get products $billingResult")
+            Log.d(TAG_BILLING, "get products $productDetailsList")
             continuation.resume(productDetailsList)
         }
     }

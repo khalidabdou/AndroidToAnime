@@ -120,7 +120,7 @@ fun forpremium() {
 }
 
 @Composable
-fun Premium(enable: Boolean = true, close: () -> Unit, purchase: () -> Unit) {
+fun Premium(enable: Boolean = true, close: () -> Unit, purchase: (Int) -> Unit) {
     Dialog(
         onDismissRequest = {
             close()
@@ -162,7 +162,7 @@ fun Premium(enable: Boolean = true, close: () -> Unit, purchase: () -> Unit) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(350.dp)
+
                         .padding(top = 50.dp, start = 6.dp, end = 6.dp)
                         .clip(RoundedCornerShape(30.dp))
                         .background(Color.White)
@@ -196,25 +196,41 @@ fun Premium(enable: Boolean = true, close: () -> Unit, purchase: () -> Unit) {
                     itemSub("Remove Ads")
                     itemSub("Photos High Quality")
                     itemSub("Speed Converting")
-
-                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.height(20.dp))
                     Button(
                         enabled = enable,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(20.dp),
+                            .padding(start = 20.dp, end = 20.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColorFor(
                                 backgroundColor = MaterialTheme.colorScheme.primary,
-
-                                ),
+                            ),
                         ),
                         onClick = {
-                            purchase()
+                            purchase(0)
                         }) {
-                        Text(text = "Buy Now 4,99$/weekly")
+                        Text(text = "Buy Now 9,99$/weekly")
                     }
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Button(
+                        enabled = enable,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp, end = 20.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColorFor(
+                                backgroundColor = MaterialTheme.colorScheme.primary,
+                            ),
+                        ),
+                        onClick = {
+                            purchase(1)
+                        }) {
+                        Text(text = "Buy Now 19,99$/Monthly")
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
             Image(
                 painter = painterResource(id = R.drawable.diamond),

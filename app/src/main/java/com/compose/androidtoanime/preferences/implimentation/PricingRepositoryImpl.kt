@@ -61,8 +61,8 @@ class PricingRepositoryImpl @Inject constructor(
 
     override fun getBillingClient() = billingClient
 
-    override fun makePurchase(activity: Activity, productDetails: ProductDetails) {
-        val offerToken = productDetails.subscriptionOfferDetails?.get(0)?.offerToken
+    override fun makePurchase(tokenId:Int,activity: Activity, productDetails: ProductDetails) {
+        val offerToken = productDetails.subscriptionOfferDetails?.get(tokenId)?.offerToken
         val billingFlowParams = BillingFlowParams.newBuilder()
             .setProductDetailsParamsList(
                 ImmutableList.of(

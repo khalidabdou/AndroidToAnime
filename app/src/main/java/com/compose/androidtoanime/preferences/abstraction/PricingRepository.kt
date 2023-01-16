@@ -12,7 +12,7 @@ interface PricingRepository {
 
     suspend fun acknowledgePurchase(purchase: Purchase, billingClient: BillingClient): Boolean?
     fun getBillingClient(): BillingClient
-    fun makePurchase(activity: Activity, productDetails: ProductDetails)
+    fun makePurchase(tokenId:Int,activity: Activity, productDetails: ProductDetails)
     fun getBillingUpdateListener(): BillingUpdateListener
 
     suspend fun acknowledgePurchase(purchase: Purchase?): BillingResult?

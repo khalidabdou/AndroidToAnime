@@ -115,7 +115,7 @@ class MainActivity : ComponentActivity() {
                     },
                         purchase = {
                             //pricingViewModel.checkSubscription()
-                            pricingViewModel.makePurchase(
+                            pricingViewModel.makePurchase(it,
                                 (context as Activity)
                             )
                             //pricingViewModel.makePurchase((context as Activity))

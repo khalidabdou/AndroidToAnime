@@ -79,7 +79,7 @@ fun MyNavigationDrawer(onClick: () -> Unit) {
                 //showInterstitialAfterClick(context)
             }
             ItemDrawer(stringResource(R.string.privacy), painterResource(id = R.drawable.policy)) {
-                AppUtils.openStore("https://stickersapi.specialones.online", context)
+                AppUtils.openStore("https://www.animemagic.fun/privacy", context)
                 //showInterstitialAfterClick(context)
             }
             ItemDrawer(stringResource(R.string.site), painterResource(id = R.drawable.site)) {

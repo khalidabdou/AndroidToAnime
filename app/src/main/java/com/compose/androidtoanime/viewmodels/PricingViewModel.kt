@@ -48,8 +48,8 @@ class PricingViewModel @Inject constructor(
 
 
 
-    fun makePurchase(activity: Activity) =
-        repo.pricingRepositoryImpl.makePurchase(activity, productList[0]!!)
+    fun makePurchase(tokenId:Int,activity: Activity) =
+        repo.pricingRepositoryImpl.makePurchase(tokenId,activity, productList[0]!!)
 
 
     fun handlePurchase() = runBlocking {
@@ -83,7 +83,7 @@ class PricingViewModel @Inject constructor(
         billingClient.acknowledgePurchase(
             acknowledgePurchaseParams
         ) { billingResult: BillingResult ->
-            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases.purchaseState==Purchase.PurchaseState.PURCHASED) {
                 isSubscribe.value = true
                 Log.d(TAG_BILLING, "Subscription activated, Enjoy!" + purchases.purchaseToken)
             }
@@ -110,15 +110,6 @@ class PricingViewModel @Inject constructor(
         }
 
     }
-
-    fun startConnection() {
-        if (!billingClient.isReady)
-            viewModelScope.launch {
-                billingClient.startBillingConnection()
-            }
-
-    }
-
 
 }
 
