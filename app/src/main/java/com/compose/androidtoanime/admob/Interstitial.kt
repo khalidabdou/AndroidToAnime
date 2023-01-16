@@ -23,7 +23,9 @@ val showAd = 10
 
 
 // load the interstitial ad
-fun loadInterstitial(context: Context) {
+fun loadInterstitial(context: Context, isSubscribed: Boolean) {
+    if (isSubscribed)
+        return
     InterstitialAd.load(
         context,
         Inter.ad_id,
@@ -45,15 +47,16 @@ fun loadInterstitial(context: Context) {
 }
 
 
-fun showInterstitialAfterClick(context: Context) {
-
+fun showInterstitialAfterClick(context: Context, isSubscribed: Boolean) {
+    if (isSubscribed)
+        return
     countShow++
     //Log.d("MainActivity", "$countShow")
 
     if (Inter.ad_status) {
         //Log.d("MainActivity", "Ad admob.")
         if (mInterstitialAd == null) {
-            loadInterstitial(context)
+            loadInterstitial(context, isSubscribed)
         }
         if (countShow % Inter.show_count!! != 0) {
             return
@@ -65,7 +68,7 @@ fun showInterstitialAfterClick(context: Context) {
                 override fun onAdDismissedFullScreenContent() {
                     //Log.d("MainActivity", "Ad was dismissed.")
                     mInterstitialAd = null
-                    loadInterstitial(activity!!)
+                    loadInterstitial(activity!!, isSubscribed)
                 }
 
                 override fun onAdFailedToShowFullScreenContent(adError: AdError) {

@@ -67,6 +67,7 @@ class MainViewModel @Inject constructor(
     var openExit by mutableStateOf(false)
     var openHow by mutableStateOf(false)
     var image = ""
+    var isSubscribe = mutableStateOf(false)
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("Recycle")

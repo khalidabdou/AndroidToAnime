@@ -149,7 +149,7 @@ fun Premium(enable: Boolean = true, close: () -> Unit, purchase: () -> Unit) {
                         modifier = Modifier.size(100.dp)
                     )
                     Text(
-                        text = "You Have Subscribed",
+                        text = "Subscription activated, Enjoy",
                         style = MaterialTheme.typography.titleLarge,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
@@ -192,9 +192,9 @@ fun Premium(enable: Boolean = true, close: () -> Unit, purchase: () -> Unit) {
                         )
                     }
 
-                    itemSub("Unlimited")
+                    itemSub("Unlimited Weekly")
                     itemSub("Remove Ads")
-                    itemSub("High Quality")
+                    itemSub("Photos High Quality")
                     itemSub("Speed Converting")
 
                     Spacer(modifier = Modifier.weight(1f))
@@ -213,7 +213,7 @@ fun Premium(enable: Boolean = true, close: () -> Unit, purchase: () -> Unit) {
                         onClick = {
                             purchase()
                         }) {
-                        Text(text = "Buy Now 4,99$/mo")
+                        Text(text = "Buy Now 4,99$/weekly")
                     }
                 }
             Image(
@@ -227,8 +227,6 @@ fun Premium(enable: Boolean = true, close: () -> Unit, purchase: () -> Unit) {
             )
         }
     }
-
-
 }
 
 @Composable

@@ -29,4 +29,5 @@
     <string name="permission">storage permission needed</string>
     <string name="convert">Convert</string>
     <string name="agree">Agree</string>
+    <string name="upgrade_message">you have reached the limit for the number of conversion you can create at this time , Upgrade to Premium</string>
 </resources>

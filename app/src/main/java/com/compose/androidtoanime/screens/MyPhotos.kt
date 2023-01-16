@@ -29,7 +29,6 @@ import com.compose.androidtoanime.BuildConfig
 import com.compose.androidtoanime.R
 import com.compose.androidtoanime.Utils.AppUtils
 import com.compose.androidtoanime.viewmodels.MainViewModel
-import com.wishes.jetpackcompose.admob.showInterstitialAfterClick
 import java.util.concurrent.Executors
 
 @Composable
@@ -42,10 +41,10 @@ fun MyPhotos(viewModel: MainViewModel) {
     LaunchedEffect(key1 = true) {
         Log.d("database", "--")
         viewModel.getPhotos()
-        showInterstitialAfterClick(context)
+        //showInterstitialAfterClick(context)
     }
 
-    if (viewModel.myPhotos.size <= 0) {
+    if (viewModel.myPhotos.isEmpty()) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -131,7 +130,7 @@ fun MyPhotoItem(url: String, context: Context, onDelete: () -> Unit) {
                     .padding(2.dp)
                     .clickable
                     {
-                        showInterstitialAfterClick(context)
+                        //showInterstitialAfterClick(context)
                         myExecutor.execute {
                             val mImage = AppUtils.toBitmap(context, url)
                             myHandler.post {
@@ -153,7 +152,7 @@ fun MyPhotoItem(url: String, context: Context, onDelete: () -> Unit) {
                     .padding(6.dp)
                     .clickable
                     {
-                        showInterstitialAfterClick(context)
+                        //showInterstitialAfterClick(context)
                         onDelete()
                     }
 

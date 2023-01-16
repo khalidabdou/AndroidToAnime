@@ -29,7 +29,7 @@ class AppUtils {
         const val TABLE_IMAGE = "table_photos"
         const val DATABASE_NAME = "db_name"
         val applovinClass = applovin()
-        const val MAX_PHOTO = 200
+        const val MAX_PHOTO = 3
         const val ENABLE_PREMIUM = true
         lateinit var bitmap: Bitmap
 
@@ -93,15 +93,18 @@ class AppUtils {
                     == PackageManager.PERMISSION_GRANTED)
         }
 
-        fun compressImage(imageFilePath: String): Bitmap? {
+        fun compressImage(imageFilePath: String, isSubscribed: Boolean = false): Bitmap? {
             // Get the size of the image
             val options = BitmapFactory.Options()
             options.inJustDecodeBounds = true
             BitmapFactory.decodeFile(imageFilePath, options)
-
+            var maxWidth = 1000
+            var maxHeight = 1000
             // Compute the sample size to fit the image within the desired size
-            val maxWidth = 1000
-            val maxHeight = 1000
+            if (isSubscribed) {
+                maxWidth = 10000
+                maxHeight = 10000
+            }
             var sampleSize = 1
             while ((options.outWidth / sampleSize) >= maxWidth || (options.outHeight / sampleSize) >= maxHeight) {
                 sampleSize *= 2

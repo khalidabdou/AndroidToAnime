@@ -21,11 +21,12 @@ import com.compose.androidtoanime.Utils.AppUtils.Companion.saveImage
 import com.compose.androidtoanime.Utils.AppUtils.Companion.sharePalette
 import com.compose.androidtoanime.Utils.AppUtils.Companion.toBitmap
 import com.compose.androidtoanime.viewmodels.MainViewModel
+import com.compose.androidtoanime.viewmodels.PricingViewModel
 import com.wishes.jetpackcompose.admob.showInterstitialAfterClick
 import java.util.concurrent.Executors
 
 @Composable
-fun Share(viewModel: MainViewModel) {
+fun Share(viewModel: MainViewModel, pricingViewModel: PricingViewModel) {
 
     val context = LocalContext.current
     val myExecutor = Executors.newSingleThreadExecutor()
@@ -56,7 +57,7 @@ fun Share(viewModel: MainViewModel) {
                 text = stringResource(R.string.download),
                 painter = painterResource(id = R.drawable.download)
             ) {
-                showInterstitialAfterClick(context)
+                showInterstitialAfterClick(context, pricingViewModel.isSubscribe.value)
                 myExecutor.execute {
                     val mImage = toBitmap(context, viewModel.getUrl())
                     myHandler.post {
@@ -72,7 +73,7 @@ fun Share(viewModel: MainViewModel) {
                 text = stringResource(R.string.share),
                 painter = painterResource(id = R.drawable.share)
             ) {
-                showInterstitialAfterClick(context)
+                showInterstitialAfterClick(context, pricingViewModel.isSubscribe.value)
                 myExecutor.execute {
                     val mImage = toBitmap(context, viewModel.getUrl())
                     myHandler.post {
@@ -88,7 +89,7 @@ fun Share(viewModel: MainViewModel) {
                 text = null,
                 painter = painterResource(id = R.drawable.whatsapp)
             ) {
-                showInterstitialAfterClick(context)
+                showInterstitialAfterClick(context, pricingViewModel.isSubscribe.value)
                 myExecutor.execute {
                     val mImage = toBitmap(context, viewModel.getUrl())
                     myHandler.post {

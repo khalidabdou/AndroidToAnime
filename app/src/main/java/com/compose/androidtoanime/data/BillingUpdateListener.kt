@@ -20,5 +20,4 @@ class BillingUpdateListener @Inject constructor() : PurchasesUpdatedListener {
         Log.d(TAG_BILLING, "${purchases}")
         purchaseUpdateLiveData.value = purchases
     }
-
 }

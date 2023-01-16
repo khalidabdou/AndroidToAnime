@@ -30,20 +30,27 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.compose.androidtoanime.R
 import com.compose.androidtoanime.Utils.AppUtils.Companion.MAX_PHOTO
+import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_D
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
 import com.compose.androidtoanime.Utils.AppUtils.Companion.compressImage
 import com.compose.androidtoanime.Utils.AppUtils.Companion.hasStoragePermission
 import com.compose.androidtoanime.Utils.FileUtil
 import com.compose.androidtoanime.Utils.NetworkResults
 import com.compose.androidtoanime.viewmodels.MainViewModel
+import com.compose.androidtoanime.viewmodels.PricingViewModel
 import com.wishes.jetpackcompose.admob.loadInterstitial
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Upload(navController: NavHostController, viewModel: MainViewModel) {
+fun Upload(
+    navController: NavHostController,
+    viewModel: MainViewModel,
+    pricingViewModel: PricingViewModel
+) {
 
     val context = LocalContext.current
+    val isSubscribed = pricingViewModel.isSubscribe.value
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
     }
@@ -55,13 +62,11 @@ fun Upload(navController: NavHostController, viewModel: MainViewModel) {
         else mutableStateOf(true)
     }
 
-    LaunchedEffect(key1 = true, block = {
-        loadInterstitial(context)
+    LaunchedEffect(key1 = Unit, block = {
+        loadInterstitial(context, pricingViewModel.isSubscribe.value)
+        viewModel.getPhotos()
     })
-
-
     var pathImage: String? = null
-
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -108,7 +113,7 @@ fun Upload(navController: NavHostController, viewModel: MainViewModel) {
     if (imageUri != null) {
         if (hasStoragePermission(context)) {
             pathImage = FileUtil(context).getPath(imageUri!!)
-            bitmap = pathImage?.let { compressImage(it) }!!
+            bitmap = pathImage?.let { compressImage(it, isSubscribed) }!!
         } else
             Toast.makeText(context, stringResource(R.string.try_later), Toast.LENGTH_SHORT).show()
     }
@@ -138,7 +143,7 @@ fun Upload(navController: NavHostController, viewModel: MainViewModel) {
 
         when (viewModel.readyImage) {
             is NetworkResults.Success -> {
-                Share(viewModel = viewModel)
+                Share(viewModel = viewModel, pricingViewModel)
                 //viewModel.readyImage = NetworkResults.NotYet()
                 //navController.navigate(NavRoutes.Share.route)
             }
@@ -148,7 +153,6 @@ fun Upload(navController: NavHostController, viewModel: MainViewModel) {
                 viewModel.readyImage = NetworkResults.NotYet()
             }
             is NetworkResults.Loading -> {
-
                 Box(contentAlignment = Alignment.Center) {
                     AsyncImage(
                         model = pathImage,
@@ -162,10 +166,13 @@ fun Upload(navController: NavHostController, viewModel: MainViewModel) {
                         }),
                     )
                     LoadingAnimation1()
-                    //GifImage()
+                    Text(
+                        text = "Please wait for converting ...",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = Color.White
+                    )
                 }
-
-                //Toast.makeText(context, "Loading ...", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Loading ...", Toast.LENGTH_LONG).show()
             }
             is NetworkResults.NotYet -> {
                 if (openPermission)
@@ -234,12 +241,18 @@ fun Upload(navController: NavHostController, viewModel: MainViewModel) {
                                 modifier = Modifier.size(27.dp)
                             )
                         }
-                        Button(modifier = Modifier, onClick = {
+                        Button(onClick = {
                             if (pathImage != null) {
-                                if (viewModel.myPhotos.size > MAX_PHOTO) {
+                                if (viewModel.myPhotos.size > MAX_PHOTO && !isSubscribed) {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.upgrade_message),
+                                        Toast.LENGTH_LONG
+                                    ).show()
                                     viewModel.openPremium = true
                                 } else
                                     viewModel.upload(pathImage)
+                                Log.d(TAG_D, "${viewModel.myPhotos.size}")
                             }
                         }) {
                             Icon(

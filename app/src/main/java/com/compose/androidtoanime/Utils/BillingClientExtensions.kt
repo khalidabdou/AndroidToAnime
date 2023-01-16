@@ -32,10 +32,8 @@ fun BillingClient.startBillingConnection() {
     this.startConnection(object : BillingClientStateListener {
         override fun onBillingSetupFinished(billingResult: BillingResult) {
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-
                 Log.d(TAG_BILLING, billingResult.responseCode.toString())
                 Log.d(TAG_BILLING, "Billing response OK")
-
 
             } else {
                 Log.d(TAG_BILLING, "Billing response OK 2")
@@ -118,11 +116,13 @@ suspend fun BillingClient.consumeProduct(consumeParams: ConsumeParams): ConsumeP
 }
 
 suspend fun BillingClient.checkSubscription(): List<Purchase>? {
+    if (!this.isReady)
+        this.connect()
     return suspendCancellableCoroutine { continuation ->
         this.queryPurchasesAsync(
             QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build()
         ) { billingResult1, purchaseList ->
-            if (billingResult1.getResponseCode() === BillingClient.BillingResponseCode.OK) {
+            if (billingResult1.responseCode === BillingClient.BillingResponseCode.OK) {
                 continuation.resume(purchaseList)
             } else
                 continuation.resume(null)

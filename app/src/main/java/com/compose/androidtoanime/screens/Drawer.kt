@@ -23,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.compose.androidtoanime.R
 import com.compose.androidtoanime.Utils.AppUtils
-import com.wishes.jetpackcompose.admob.showInterstitialAfterClick
 
 
 @Composable
@@ -68,24 +67,24 @@ fun MyNavigationDrawer(onClick: () -> Unit) {
             Spacer(modifier = Modifier.height(20.dp))
             ItemDrawer(stringResource(R.string.invite), painterResource(id = R.drawable.user)) {
                 AppUtils.share(context)
-                showInterstitialAfterClick(context)
+                //showInterstitialAfterClick(context,)
             }
             ItemDrawer(stringResource(R.string.rate), painterResource(id = R.drawable.star)) {
                 AppUtils.rateApp(context)
-                showInterstitialAfterClick(context)
+                //showInterstitialAfterClick(context)
             }
 
             ItemDrawer(stringResource(R.string.feed), painterResource(id = R.drawable.feed)) {
                 AppUtils.sendEmail(context)
-                showInterstitialAfterClick(context)
+                //showInterstitialAfterClick(context)
             }
             ItemDrawer(stringResource(R.string.privacy), painterResource(id = R.drawable.policy)) {
                 AppUtils.openStore("https://stickersapi.specialones.online", context)
-                showInterstitialAfterClick(context)
+                //showInterstitialAfterClick(context)
             }
             ItemDrawer(stringResource(R.string.site), painterResource(id = R.drawable.site)) {
                 AppUtils.openStore(context.getString(R.string.site_url), context)
-                showInterstitialAfterClick(context)
+                //showInterstitialAfterClick(context)
             }
             Column(
                 modifier = Modifier

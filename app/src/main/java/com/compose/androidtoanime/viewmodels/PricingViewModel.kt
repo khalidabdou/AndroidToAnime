@@ -11,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import com.android.billingclient.api.*
 import com.compose.androidtoanime.RepositoryImpl
 import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_BILLING
-
 import com.compose.androidtoanime.Utils.startBillingConnection
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,9 +43,9 @@ class PricingViewModel @Inject constructor(
     }
 
     init {
-        //isSubscribe.value = !purchaes.value.isNullOrEmpty()
-        //handlePurchase()
+        checkSubscription()
     }
+
 
 
     fun makePurchase(activity: Activity) =
@@ -70,14 +69,13 @@ class PricingViewModel @Inject constructor(
         val params = QueryPurchaseHistoryParams.newBuilder()
             .setProductType(BillingClient.ProductType.SUBS)
 
-
     }
 
     fun savePurchase(purchase: Purchase) = viewModelScope.launch {
         repo.dataStore.savePurchase("purchase", purchase)
     }
 
-    fun verifySubPurchase(purchases: Purchase) {
+    private fun verifySubPurchase(purchases: Purchase) {
         val acknowledgePurchaseParams = AcknowledgePurchaseParams
             .newBuilder()
             .setPurchaseToken(purchases.purchaseToken)
@@ -96,18 +94,19 @@ class PricingViewModel @Inject constructor(
     }
 
     init {
-        //getProducts()
         checkSubscription()
     }
 
     fun checkSubscription() {
         viewModelScope.launch {
-            purchaes.value = repo.pricingRepositoryImpl.checkSubscription()
-            if (!purchaes.value.isNullOrEmpty()) {
+            if (purchaes.value == null) {
+                purchaes.value = repo.pricingRepositoryImpl.checkSubscription()
+                //checkSubscription()
+                Log.d(TAG_BILLING, "checkSubscription null ${purchaes.value}")
+            } else if (purchaes.value!!.isNotEmpty()) {
                 verifySubPurchase(purchaes.value!![0])
-            }
-
-            Log.d(TAG_BILLING, "checkSubscription ${purchaes.value}")
+            } else
+                Log.d(TAG_BILLING, "checkSubscription ${purchaes.value}")
         }
 
     }

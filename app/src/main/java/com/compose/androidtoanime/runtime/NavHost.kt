@@ -1,5 +1,7 @@
 package com.wishes.jetpackcompose.runtime
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -9,6 +11,7 @@ import com.compose.androidtoanime.viewmodels.MainViewModel
 import com.compose.androidtoanime.viewmodels.PricingViewModel
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationHost(navController: NavHostController, viewModel: MainViewModel,pricingViewModel: PricingViewModel) {
 
@@ -21,15 +24,15 @@ fun NavigationHost(navController: NavHostController, viewModel: MainViewModel,pr
         }
 
         composable(NavRoutes.Home.route) {
-            Home(navController, viewModel)
+            Home(navController, viewModel, pricingViewModel)
         }
 
         composable(NavRoutes.Upload.route) {
-            Upload(navController, viewModel)
+            Upload(navController, viewModel, pricingViewModel)
         }
 
         composable(NavRoutes.Share.route) {
-            Share(viewModel)
+            Share(viewModel, pricingViewModel)
         }
 
         composable(NavRoutes.MyPhotos.route) {
