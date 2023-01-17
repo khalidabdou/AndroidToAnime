@@ -81,14 +81,7 @@ fun MSplash(alpha: Float) {
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-        Image(
-            modifier = Modifier
-                .size(90.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .alpha(alpha),
-            painter = painterResource(id = R.drawable.magic),
-            contentDescription = "Logo Icon",
-        )
+
         Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = stringResource(id = R.string.app_name),

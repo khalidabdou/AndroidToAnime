@@ -9,12 +9,27 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.security.KeyManagementException
+import java.security.KeyStoreException
+import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import javax.net.ssl.*
+
+import javax.net.ssl.SSLContext
+
+import javax.net.ssl.SSLSocket
+
+import javax.net.ssl.SSLSocketFactory
+
+import javax.net.ssl.TrustManager
+
+import javax.net.ssl.TrustManagerFactory
+
+import javax.net.ssl.X509TrustManager
 
 
 @Module
@@ -35,6 +50,7 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideConverterFactory(): GsonConverterFactory {
+
         return GsonConverterFactory.create()
     }
 
@@ -44,6 +60,7 @@ object NetworkModule {
         okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
+
 
         return Retrofit.Builder()
             .baseUrl(BuildConfig.api)
