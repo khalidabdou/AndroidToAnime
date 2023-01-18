@@ -145,17 +145,22 @@ fun TopBar(
     open: () -> Unit,
 ) {
     TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
+            titleContentColor = MaterialTheme.colorScheme.onBackground
+        ),
         title = {
-            Text(text = stringResource(id = R.string.app_name), modifier = Modifier.clickable {
-                drawer()
-            })
+//            Text(text = stringResource(id = R.string.app_name), modifier = Modifier.clickable {
+//                drawer()
+//            })
         },
         navigationIcon = {
             Spacer(modifier = Modifier.width(3.dp))
             Icon(
                 painter = painterResource(id = R.drawable.settings),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(27.dp)
                     .padding(2.dp)
@@ -171,7 +176,7 @@ fun TopBar(
             Icon(
                 painter = painterResource(id = R.drawable.premium),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(27.dp)
                     .padding(2.dp)
@@ -184,7 +189,7 @@ fun TopBar(
             Icon(
                 painter = painterResource(id = R.drawable.photos),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(27.dp)
                     .padding(4.dp)
@@ -192,11 +197,7 @@ fun TopBar(
                         myphoto()
                     }
             )
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary
-        )
+        }
     )
 }
 
