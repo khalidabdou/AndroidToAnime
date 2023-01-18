@@ -11,26 +11,21 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
 import com.compose.androidtoanime.R
-import com.compose.androidtoanime.Utils.AppUtils.Companion.MAX_PHOTO
-import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_D
+import com.compose.androidtoanime.Utils.AppUtils
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
 import com.compose.androidtoanime.Utils.AppUtils.Companion.compressImage
 import com.compose.androidtoanime.Utils.AppUtils.Companion.hasStoragePermission
@@ -55,13 +50,11 @@ fun Upload(
         mutableStateOf<Uri?>(null)
     }
 
-
     var openPermission by remember {
         if (hasStoragePermission(context))
             mutableStateOf(false)
         else mutableStateOf(true)
     }
-
     LaunchedEffect(key1 = Unit, block = {
         loadInterstitial(context, pricingViewModel.isSubscribe.value)
         viewModel.getPhotos()
@@ -83,16 +76,6 @@ fun Upload(
     }
 
 
-    val infiniteTransition = rememberInfiniteTransition()
-    val offset by infiniteTransition.animateFloat(
-        initialValue = 0F,
-        targetValue = -100F,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        )
-    )
-
     //scan photo animation
     val transition = rememberInfiniteTransition()
     val translateAnim by transition.animateFloat(
@@ -105,11 +88,6 @@ fun Upload(
     )
 
 
-
-
-
-
-
     if (imageUri != null) {
         if (hasStoragePermission(context)) {
             pathImage = FileUtil(context).getPath(imageUri!!)
@@ -117,7 +95,6 @@ fun Upload(
         } else
             Toast.makeText(context, stringResource(R.string.try_later), Toast.LENGTH_SHORT).show()
     }
-
     BackHandler() {
         if (viewModel.readyImage is NetworkResults.Loading) {
             Toast.makeText(context, context.getString(R.string.wait), Toast.LENGTH_SHORT).show()
@@ -132,146 +109,60 @@ fun Upload(
     }
 
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier) {
-        val imagePicker = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetContent(),
-            onResult = { uri ->
-                if (uri != null)
-                    imageUri = uri
-            }
-        )
+    val imagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            if (uri != null)
+                imageUri = uri
+        }
+    )
 
-        when (viewModel.readyImage) {
-            is NetworkResults.Success -> {
-                Share(viewModel = viewModel, pricingViewModel)
-                //viewModel.readyImage = NetworkResults.NotYet()
-                //navController.navigate(NavRoutes.Share.route)
-            }
-            is NetworkResults.Error -> {
-                Toast.makeText(context, context.getString(R.string.try_later), Toast.LENGTH_SHORT)
-                    .show()
-                viewModel.readyImage = NetworkResults.NotYet()
-            }
-            is NetworkResults.Loading -> {
-                Box(contentAlignment = Alignment.Center) {
-                    AsyncImage(
-                        model = pathImage,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply {
-                            setToSaturation(
-                                0f
-                            )
-                        }),
-                    )
-                    LoadingAnimation1()
-                    Text(
-                        text = "Please wait for converting ...",
-                        style = MaterialTheme.typography.titleSmall,
-                        color = Color.White
-                    )
+    when (viewModel.readyImage) {
+        is NetworkResults.Success -> {
+            Share(viewModel = viewModel, pricingViewModel)
+        }
+        is NetworkResults.Error -> {
+            Toast.makeText(context, context.getString(R.string.try_later), Toast.LENGTH_SHORT)
+                .show()
+            viewModel.readyImage = NetworkResults.NotYet()
+        }
+        is NetworkResults.Loading -> {
+            pathImage?.let { converting(it, context) }
+        }
+        is NetworkResults.NotYet -> {
+            if (openPermission)
+                Permission {
+                    launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
-                Toast.makeText(context, "Loading ...", Toast.LENGTH_LONG).show()
-            }
-            is NetworkResults.NotYet -> {
-                if (openPermission)
-                    Permission {
-                        launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    }
-                if (imageUri == null)
-                    Icon(
-                        painter = painterResource(id = R.drawable.gallery),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .size(50.dp)
-                            .offset(y = offset.dp)
-                            .weight(1f),
-                    ) else
-                    AsyncImage(
-                        model = pathImage,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .weight(1f),
-                    )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(5.dp), horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    if (imageUri == null)
-                        OutlinedButton(onClick = {
-                            imagePicker.launch("image/*")
-                            if (!hasStoragePermission(context))
-                                launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            notYet(imageUri = imageUri, pathImage = pathImage, onSelect = {
+                if (hasStoragePermission(context)) {
+                    imagePicker.launch("image/*")
+                } else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.permission),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                }
 
-
-                        }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.gallery),
-                                contentDescription = null,
-                                modifier = Modifier.size(27.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = stringResource(R.string.upload),
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                        }
-                    if (imageUri != null) {
-                        OutlinedButton(onClick = {
-                            if (hasStoragePermission(context)) {
-                                imagePicker.launch("image/*")
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    context.getString(R.string.permission),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                            }
-
-
-                        }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.gallery),
-                                contentDescription = null,
-                                modifier = Modifier.size(27.dp)
-                            )
-                        }
-                        Button(onClick = {
-                            if (pathImage != null) {
-                                if (viewModel.myPhotos.size > MAX_PHOTO && !isSubscribed) {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.upgrade_message),
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                    viewModel.openPremium = true
-                                } else
-                                    viewModel.upload(pathImage)
-                                Log.d(TAG_D, "${viewModel.myPhotos.size}")
-                            }
-                        }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.magic),
-                                contentDescription = null,
-                                modifier = Modifier.size(27.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = stringResource(R.string.convert),
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                        }
-                    }
+            }) {
+                if (pathImage != null) {
+                    if (viewModel.myPhotos.size > AppUtils.MAX_PHOTO && !isSubscribed) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.upgrade_message),
+                            Toast.LENGTH_LONG
+                        ).show()
+                        viewModel.openPremium = true
+                    } else
+                        viewModel.upload(pathImage)
+                    Log.d(AppUtils.TAG_D, "${viewModel.myPhotos.size}")
                 }
             }
         }
+        else -> {}
     }
-
 }
 
 
