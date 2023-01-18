@@ -16,6 +16,10 @@ interface Api {
     @POST("/upload")
     suspend fun sendPhotoFromBody(@Part files: MultipartBody.Part): Response<ResponsePhoto?>
 
+    @Multipart
+    @POST("/api/premium")
+    suspend fun premium(@Part files: MultipartBody.Part): Response<ResponsePhoto?>
+
     //ads
     @GET("/api/ads")
     suspend fun getAds(

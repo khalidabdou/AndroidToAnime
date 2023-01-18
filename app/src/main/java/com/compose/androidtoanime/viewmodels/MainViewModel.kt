@@ -84,7 +84,7 @@ class MainViewModel @Inject constructor(
         readyImage = NetworkResults.Loading()
         val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file!!)
         val body = MultipartBody.Part.createFormData("file", file!!.name, requestFile)
-        val res = repo.remote.upload(body)
+        val res = repo.remote.premium(body)
         readyImage = HandleResponse(res).handleResult()
         if (readyImage is NetworkResults.Success) {
             if (readyImage != null && (readyImage as NetworkResults.Success<ResponsePhoto>).data != null)

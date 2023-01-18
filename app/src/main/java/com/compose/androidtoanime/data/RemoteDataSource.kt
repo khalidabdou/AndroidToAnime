@@ -16,6 +16,9 @@ class RemoteDataSource @Inject constructor(
         return wallApi.sendPhotoFromBody(photo)
     }
 
+    suspend fun premium(photo: MultipartBody.Part): Response<ResponsePhoto?> {
+        return wallApi.premium(photo)
+    }
 
     suspend fun getAds(): Response<Ads?> = wallApi.getAds()
 
