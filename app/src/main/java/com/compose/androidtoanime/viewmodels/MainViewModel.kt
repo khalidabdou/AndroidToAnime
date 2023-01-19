@@ -71,7 +71,7 @@ class MainViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("Recycle")
-    fun upload(path: String) = viewModelScope.launch {
+    fun convert(path: String) = viewModelScope.launch {
 
         val fileName = "${generateNewPath()}+.jpeg"
         val newpath = path.replace(path.split(File.separator).last(), fileName)
@@ -84,7 +84,7 @@ class MainViewModel @Inject constructor(
         readyImage = NetworkResults.Loading()
         val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file!!)
         val body = MultipartBody.Part.createFormData("file", file!!.name, requestFile)
-        val res = repo.remote.upload(body)
+        val res = repo.remote.convert(body)
         readyImage = HandleResponse(res).handleResult()
         if (readyImage is NetworkResults.Success) {
             if (readyImage != null && (readyImage as NetworkResults.Success<ResponsePhoto>).data != null)

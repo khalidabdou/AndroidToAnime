@@ -41,9 +41,9 @@ fun MyNavigationDrawer(onClick: () -> Unit) {
                 Brush.linearGradient(
                     listOf(
                         MaterialTheme.colorScheme.background,
+                        MaterialTheme.colorScheme.background,
                         MaterialTheme.colorScheme.background.copy(0.9f),
-                        MaterialTheme.colorScheme.primary.copy(0.6f),
-                        MaterialTheme.colorScheme.primary.copy(0.7f),
+                        MaterialTheme.colorScheme.background.copy(0.7f),
                     )
                 )
             ),
@@ -60,7 +60,7 @@ fun MyNavigationDrawer(onClick: () -> Unit) {
                 Text(
                     text = context.getString(R.string.app_name),
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
 
@@ -93,12 +93,12 @@ fun MyNavigationDrawer(onClick: () -> Unit) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Icon(
                     Icons.Default.ArrowBack,
-                    tint = MaterialTheme.colorScheme.onPrimary,
+                    tint = MaterialTheme.colorScheme.background,
                     contentDescription = "",
                     modifier = Modifier
                         .size(25.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onBackground)
                         .clickable {
                             onClick()
                         }
@@ -122,14 +122,14 @@ fun ItemDrawer(text: String, icon: Painter, onClick: () -> Unit) {
     ) {
         Spacer(modifier = Modifier.width(20.dp))
         Icon(
-            icon, contentDescription = "", tint = MaterialTheme.colorScheme.primary,
+            icon, contentDescription = "", tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.size(25.dp)
         )
         Spacer(modifier = Modifier.width(20.dp))
         Text(
             text = text,
             style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.onBackground,
         )
     }
 

@@ -7,6 +7,7 @@ sealed class NavRoutes(val route: String) {
     object Upload : NavRoutes("upload")
     object Share : NavRoutes("share")
     object MyPhotos : NavRoutes("my_photos")
+    object Premium : NavRoutes("premium")
     object Splash : NavRoutes("splash")
 }
 

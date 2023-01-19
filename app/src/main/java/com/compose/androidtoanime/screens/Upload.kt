@@ -49,6 +49,9 @@ fun Upload(
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
     }
+    var converting = remember {
+        mutableStateOf(false)
+    }
 
     var openPermission by remember {
         if (hasStoragePermission(context))
@@ -96,6 +99,8 @@ fun Upload(
             Toast.makeText(context, stringResource(R.string.try_later), Toast.LENGTH_SHORT).show()
     }
     BackHandler() {
+        imageUri = null
+        //return@BackHandler
         if (viewModel.readyImage is NetworkResults.Loading) {
             Toast.makeText(context, context.getString(R.string.wait), Toast.LENGTH_SHORT).show()
             return@BackHandler
@@ -126,15 +131,18 @@ fun Upload(
                 .show()
             viewModel.readyImage = NetworkResults.NotYet()
         }
-        is NetworkResults.Loading -> {
-            pathImage?.let { converting(it, context) }
-        }
-        is NetworkResults.NotYet -> {
+//        is NetworkResults.Loading -> {
+//            pathImage?.let { converting(it, context) }
+//        }
+
+        else -> {
+            if (viewModel.readyImage is NetworkResults.Loading)
+                converting.value = true
             if (openPermission)
                 Permission {
                     launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
-            notYet(imageUri = imageUri, pathImage = pathImage, onSelect = {
+            notYet(imageUri = imageUri, converting.value, onSelect = {
                 if (hasStoragePermission(context)) {
                     imagePicker.launch("image/*")
                 } else {
@@ -145,7 +153,6 @@ fun Upload(
                     ).show()
                     launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
                 }
-
             }) {
                 if (pathImage != null) {
                     if (viewModel.myPhotos.size > AppUtils.MAX_PHOTO && !isSubscribed) {
@@ -155,13 +162,15 @@ fun Upload(
                             Toast.LENGTH_LONG
                         ).show()
                         viewModel.openPremium = true
-                    } else
-                        viewModel.upload(pathImage)
+                    } else {
+                        viewModel.readyImage = NetworkResults.Loading()
+                        //viewModel.convert(pathImage)
+                    }
+
                     Log.d(AppUtils.TAG_D, "${viewModel.myPhotos.size}")
                 }
             }
         }
-        else -> {}
     }
 }
 

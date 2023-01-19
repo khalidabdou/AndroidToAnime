@@ -1,25 +1,28 @@
 package com.compose.androidtoanime
 
 import android.app.Activity
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
@@ -38,6 +41,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -86,7 +90,12 @@ class MainActivity : ComponentActivity() {
                 MyNavigationDrawer() {
                     viewModel.navigateClick = false
                 }
-
+//                Image(
+//                    painter = painterResource(id = R.drawable.wallpaper),
+//                    contentDescription = null,
+//                    modifier = Modifier.fillMaxSize(),
+//                    contentScale = ContentScale.Crop
+//                )
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()
@@ -95,19 +104,12 @@ class MainActivity : ComponentActivity() {
                         .rotate(rotate)
                         .clip(RoundedCornerShape(clipDp))
                 ) {
-//                    Toast.makeText(
-//                        context,
-//                        isSubscribe.value.toString(),
-//                        Toast.LENGTH_LONG
-//                    ).show()
                     NavigationHost(
                         navController = navController,
                         viewModel,
                         pricingViewModel = pricingViewModel
                     )
                 }
-
-                //Splash(navController,viewModel)
 
                 if (viewModel.openPremium)
                     Premium(enable = !isSubscribe.value, close = {
@@ -137,68 +139,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopBar(
-    myphoto: () -> Unit,
-    drawer: () -> Unit,
-    open: () -> Unit,
-) {
-    TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
-            titleContentColor = MaterialTheme.colorScheme.onBackground
-        ),
-        title = {
-//            Text(text = stringResource(id = R.string.app_name), modifier = Modifier.clickable {
-//                drawer()
-//            })
-        },
-        navigationIcon = {
-            Spacer(modifier = Modifier.width(3.dp))
-            Icon(
-                painter = painterResource(id = R.drawable.settings),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .size(27.dp)
-                    .padding(2.dp)
-                    .clickable {
-                        //open()
-                        drawer()
-                    }
-            )
-            Spacer(modifier = Modifier.width(3.dp))
-        },
-        actions = {
 
-            Icon(
-                painter = painterResource(id = R.drawable.premium),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .size(27.dp)
-                    .padding(2.dp)
-                    .clickable {
-                        open()
-                    }
-            )
-
-            Spacer(modifier = Modifier.width(3.dp))
-            Icon(
-                painter = painterResource(id = R.drawable.photos),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .size(27.dp)
-                    .padding(4.dp)
-                    .clickable {
-                        myphoto()
-                    }
-            )
-        }
-    )
-}
 
 

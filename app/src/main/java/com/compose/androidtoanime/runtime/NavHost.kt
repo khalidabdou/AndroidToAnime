@@ -38,5 +38,8 @@ fun NavigationHost(navController: NavHostController, viewModel: MainViewModel,pr
         composable(NavRoutes.MyPhotos.route) {
             MyPhotos(viewModel)
         }
+        composable(NavRoutes.Premium.route) {
+            Premium(navController, pricingViewModel)
+        }
     }
 }
