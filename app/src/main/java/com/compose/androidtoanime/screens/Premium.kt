@@ -75,6 +75,7 @@ fun Premium(navHostController: NavHostController, pricing: PricingViewModel) {
         Column(modifier = Modifier.padding(start = 60.dp, top = 20.dp)) {
             itemSub("Unlimited")
             itemSub("Remove Ads")
+            itemSub("Remove watermark")
             itemSub("Photos High Quality")
             itemSub("Speed Converting")
         }

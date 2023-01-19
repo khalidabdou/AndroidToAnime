@@ -34,6 +34,7 @@ import com.compose.androidtoanime.Utils.NetworkResults
 import com.compose.androidtoanime.viewmodels.MainViewModel
 import com.compose.androidtoanime.viewmodels.PricingViewModel
 import com.wishes.jetpackcompose.admob.loadInterstitial
+import com.wishes.jetpackcompose.runtime.NavRoutes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -108,8 +109,8 @@ fun Upload(
         if (viewModel.readyImage !is NetworkResults.NotYet) {
             //imageUri=null
             viewModel.readyImage = NetworkResults.NotYet()
-        } else
-            viewModel.openExit = true
+        } else{}
+            //viewModel.openExit = true
 
     }
 
@@ -125,24 +126,25 @@ fun Upload(
     when (viewModel.readyImage) {
         is NetworkResults.Success -> {
             Share(viewModel = viewModel, pricingViewModel)
+            converting.value = false
         }
         is NetworkResults.Error -> {
             Toast.makeText(context, context.getString(R.string.try_later), Toast.LENGTH_SHORT)
                 .show()
             viewModel.readyImage = NetworkResults.NotYet()
+            converting.value = false
         }
 //        is NetworkResults.Loading -> {
 //            pathImage?.let { converting(it, context) }
 //        }
 
         else -> {
-            if (viewModel.readyImage is NetworkResults.Loading)
-                converting.value = true
+            converting.value = viewModel.readyImage is NetworkResults.Loading
             if (openPermission)
                 Permission {
                     launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
-            notYet(imageUri = imageUri, converting.value, onSelect = {
+            NotYet(imageUri = imageUri, converting, onSelect = {
                 if (hasStoragePermission(context)) {
                     imagePicker.launch("image/*")
                 } else {
@@ -161,10 +163,10 @@ fun Upload(
                             context.getString(R.string.upgrade_message),
                             Toast.LENGTH_LONG
                         ).show()
-                        viewModel.openPremium = true
+                        navController.navigate(NavRoutes.Premium.route)
                     } else {
                         viewModel.readyImage = NetworkResults.Loading()
-                        //viewModel.convert(pathImage)
+                        viewModel.convert(pathImage)
                     }
 
                     Log.d(AppUtils.TAG_D, "${viewModel.myPhotos.size}")

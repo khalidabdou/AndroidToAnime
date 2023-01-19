@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -53,7 +54,13 @@ fun converting(pathImage: String, context: Context) {
     Toast.makeText(context, "Loading ...", Toast.LENGTH_LONG).show()
 }
 
-var textArray = arrayOf("Text 1", "Text 2", "Text 3")
+var textArray = arrayOf(
+    "Please wait ...",
+    "Scan photo ...",
+    "send request ...",
+    "AI Converting ...",
+    "Artificial intelligence is the simulation of human intelligence processes by computer systems."
+)
 var index = 0
 
 
@@ -69,7 +76,12 @@ private fun getBitmapFromImage(context: Context): Bitmap {
 }
 
 @Composable
-fun notYet(imageUri: Uri?, isConverting: Boolean, onSelect: () -> Unit, convert: () -> Unit) {
+fun NotYet(
+    imageUri: Uri?,
+    isConverting: MutableState<Boolean>,
+    onSelect: () -> Unit,
+    convert: () -> Unit
+) {
     val TAG = "TAG_NOT_YET"
     val infiniteTransition = rememberInfiniteTransition()
     val offset by infiniteTransition.animateFloat(
@@ -82,7 +94,9 @@ fun notYet(imageUri: Uri?, isConverting: Boolean, onSelect: () -> Unit, convert:
     )
 
     Log.d(TAG, "not yet")
-    val convertingText = remember { mutableStateOf(textArray[index++ % textArray.size]) }
+    val convertingText = remember { mutableStateOf("Ready") }
+    val progress = remember { mutableStateOf(0) }
+
 
     val scaleAnimY by animateFloatAsState(
         targetValue = if (imageUri != null) 0f else 200f,
@@ -115,13 +129,19 @@ fun notYet(imageUri: Uri?, isConverting: Boolean, onSelect: () -> Unit, convert:
 
 
     val offsetButton by animateDpAsState(
-        targetValue = if (isConverting) 100.dp else 0.dp,
+        targetValue = if (isConverting.value) 100.dp else 0.dp,
         tween(3000)
     )
 
-
-
-
+    LaunchedEffect(key1 = isConverting.value) {
+        CoroutineScope(Dispatchers.IO).launch {
+            while (isConverting.value) {
+                convertingText.value = textArray[index++ % textArray.size]
+                progress.value += 10
+                delay(3000)
+            }
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -165,12 +185,11 @@ fun notYet(imageUri: Uri?, isConverting: Boolean, onSelect: () -> Unit, convert:
             )
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = "Convert Your favorite photo to Anime,Your photo must be clear and contain a human face, illegal photos are not accepted",
+                text = "Convert Your favorite photo to Anime using AI, Your photo must be clear and contain a human face, illegal photos are not accepted",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.secondary
             )
         }
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
 
@@ -178,14 +197,7 @@ fun notYet(imageUri: Uri?, isConverting: Boolean, onSelect: () -> Unit, convert:
             if (imageUri == null) {
                 Box(modifier = Modifier.weight(1f))
             } else {
-                LaunchedEffect(key1 = Unit) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        while (isConverting) {
-                            convertingText.value = textArray[index++ % textArray.size]
-                            delay(2000)
-                        }
-                    }
-                }
+
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -211,19 +223,13 @@ fun notYet(imageUri: Uri?, isConverting: Boolean, onSelect: () -> Unit, convert:
 
                     }
                     Spacer(modifier = Modifier.height(6.dp))
-
-
                     Text(
                         text = convertingText.value,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(modifier = Modifier.height(5.dp))
-                    Text(
-                        text = getPorentege(),
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
+                    valuePorcentage(progress.value)
                 }
             }
 
@@ -246,7 +252,9 @@ fun notYet(imageUri: Uri?, isConverting: Boolean, onSelect: () -> Unit, convert:
                         stringResource(R.string.convert),
                         R.drawable.convert
                     ) {
-                        convert()
+
+                    convert()
+
                     }
                 }
             }
@@ -282,6 +290,31 @@ fun myButton(modifier: Modifier, text: String?, icon: Int, onClick: () -> Unit) 
 }
 
 
-fun getPorentege(): String {
-    return ""
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun valuePorcentage(count: Int) {
+    AnimatedContent(
+        targetState = count,
+        transitionSpec = {
+            // Compare the incoming number with the previous number.
+            if (targetState > initialState) {
+                // If the target number is larger, it slides up and fades in
+                // while the initial (smaller) number slides up and fades out.
+                slideInVertically { height -> height } + fadeIn() with
+                        slideOutVertically { height -> -height } + fadeOut()
+            } else {
+                // If the target number is smaller, it slides down and fades in
+                // while the initial number slides down and fades out.
+                slideInVertically { height -> -height } + fadeIn() with
+                        slideOutVertically { height -> height } + fadeOut()
+            }.using(
+                // Disable clipping since the faded slide-in/out should
+                // be displayed out of bounds.
+                SizeTransform(clip = false)
+            )
+        }
+    ) { targetCount ->
+        Text(text = "$targetCount%")
+    }
+
 }
