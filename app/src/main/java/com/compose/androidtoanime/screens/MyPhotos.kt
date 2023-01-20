@@ -6,7 +6,6 @@ import android.os.Looper
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -83,8 +82,6 @@ fun MyPhotoItem(url: String, context: Context, onDelete: () -> Unit) {
             .fillMaxWidth()
             .padding(16.dp)
             .clip(RoundedCornerShape(16.dp))
-            .border(1.dp, MaterialTheme.colorScheme.primary)
-            .background(MaterialTheme.colorScheme.primary)
             .clickable {
 
             },

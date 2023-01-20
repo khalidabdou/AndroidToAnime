@@ -4,12 +4,15 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.android.billingclient.api.Purchase
 import com.google.gson.Gson
 import com.wishes.jetpackcompose.preferences.abstraction.DataRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 
@@ -20,7 +23,6 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 class DataStoreRepositoryImpl @Inject constructor(
     private val context: Context
 ) : DataRepository {
-
 
     override suspend fun savePurchase(key: String, value: Purchase) {
         val gson = Gson()
@@ -37,6 +39,23 @@ class DataStoreRepositoryImpl @Inject constructor(
         val preferences = context.dataStore.data.first()
         return preferences[preferencesKey]
     }
+
+    override suspend fun incrementConvertCount() {
+        val preferencesKey = intPreferencesKey("count_converting")
+        context.dataStore.edit { preferences ->
+            val currentCounterValue = preferences[preferencesKey] ?: 0
+            preferences[preferencesKey] = currentCounterValue + 1
+        }
+
+    }
+
+    override suspend fun getConvertCount(): Flow<Int> {
+        val preferencesKey = intPreferencesKey("count")
+        val preferences = context.dataStore.data.first()
+        return flow { emit(preferences[preferencesKey] ?: 0) }
+
+    }
+
 
 }
 

@@ -30,4 +30,17 @@
     <string name="convert">Convert</string>
     <string name="agree">Agree</string>
     <string name="upgrade_message">you have reached the limit for the number of conversion you can create at this time , Upgrade to Premium</string>
+    <string name="wait_converting">Please wait for converting ...</string>
+    <string name="loading">Loading ...</string>
+    <string name="ready">Ready</string>
+    <string name="Heading">Anime Magic</string>
+    <string name="heading_description">Convert Your favorite photo to Anime using AI, Your photo must be clear and contain a human face, illegal photos are not accepted</string>
+
+
+    <array name="messages">
+        <item>Please Wait ...</item>
+        <item>Scan photo ...</item>
+        <item>Send request ...</item>
+        <item>AI Converting ...</item>
+    </array>
 </resources>

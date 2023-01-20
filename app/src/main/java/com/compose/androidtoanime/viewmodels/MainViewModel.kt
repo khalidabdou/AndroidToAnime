@@ -3,22 +3,17 @@ package com.compose.androidtoanime.viewmodels
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
 import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.billingclient.api.AcknowledgePurchaseParams
-import com.android.billingclient.api.BillingClient
-import com.android.billingclient.api.Purchase
 import com.compose.androidtoanime.BuildConfig
 import com.compose.androidtoanime.RepositoryImpl
-import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_BILLING
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
 import com.compose.androidtoanime.Utils.AppUtils.Companion.generateNewPath
 import com.compose.androidtoanime.Utils.AppUtils.Companion.saveBitmapToFile
@@ -55,11 +50,12 @@ class MainViewModel @Inject constructor(
 
     //local
     var myPhotos by mutableStateOf(emptyList<ResponsePhoto>())
+    var contConverting = mutableStateOf(0)
+    //var countConverting = _contConverting.value
 
     //remote
     var readyImage by mutableStateOf<NetworkResults<ResponsePhoto>?>(NetworkResults.NotYet())
     val infos = mutableStateOf<NetworkResults<Ads>>(NetworkResults.Loading())
-
 
     //variables
     var openPremium by mutableStateOf(false)
@@ -169,128 +165,14 @@ class MainViewModel @Inject constructor(
     }
 
 
-//    val productList = mutableListOf<QueryProductDetailsParams.Product>()
-//
-//    fun startBillingConnection(context: Context,billingClient: BillingClient) {
-//        billingClient.startConnection(object : BillingClientStateListener {
-//            override fun onBillingSetupFinished(billingResult: BillingResult) {
-//                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-//
-//                    Log.d(TAG_BILLING, billingResult.responseCode.toString())
-//                    Log.d(TAG_BILLING, "Billing response OK")
-//
-//                    // The BillingClient is ready. You can query purchases and product details here
-//                    getProducts(billingClient)
-//                } else {
-//                    Log.d(TAG_BILLING, "Billing response OK 2")
-//                    Log.e(TAG_BILLING, billingResult.debugMessage)
-//                }
-//            }
-//
-//            override fun onBillingServiceDisconnected() {
-//                Log.i(TAG, "Billing connection disconnected")
-//                startBillingConnection(context,billingClient)
-//            }
-//        })
-//    }
-//
-//
-//    fun getProducts(billingClient: BillingClient) {
-//        val queryProductDetailsParams =
-//            QueryProductDetailsParams.newBuilder()
-//                .setProductList(
-//                    ImmutableList.of(
-//                        QueryProductDetailsParams.Product.newBuilder()
-//                            .setProductId("premium_access")
-//                            .setProductType(BillingClient.ProductType.SUBS)
-//                            .build()
-//                    )
-//                )
-//                .build()
-//
-//        billingClient.queryProductDetailsAsync(queryProductDetailsParams) { billingResult,
-//                                                                            productDetailsList ->
-//
-//
-//            Log.d(TAG_BILLING, "kkkkk")
-//            Log.d(TAG_BILLING, productDetailsList.toString())
-//            queryProductDetails(billingClient,productDetailsList)
-//            //startConnexion(context)
-//            // check billingResult
-//            // process returned productDetailsList
-//            //queryProductDetails(products = productDetailsList, billingClient = billingClient)
-//        }
-//
-//
-//    }
-//
-//    var productDetails by mutableStateOf<ProductDetails?>(null)
-//    fun queryProductDetails(billingClient: BillingClient,products:List<ProductDetails>) {
-//        val params = QueryProductDetailsParams.newBuilder()
-//
-//        for (product in products) {
-//            productList.add(
-//                QueryProductDetailsParams.Product.newBuilder()
-//                    .setProductId(product.productId)
-//                    .setProductType(BillingClient.ProductType.SUBS)
-//                    .build()
-//            )
-//
-//            params.setProductList(productList).let { productDetailsParams ->
-//                Log.i(TAG_BILLING, "queryProductDetailsAsync")
-//                billingClient.queryProductDetailsAsync(productDetailsParams.build(), object : ProductDetailsResponseListener{
-//                    override fun onProductDetailsResponse(
-//                        res: BillingResult,
-//                        product: MutableList<ProductDetails>
-//                    ) {
-//
-//                        productDetails= product[0]
-//
-//                        Log.i(TAG_BILLING, "$product")
-//                    }
-//                })
-//            }
-//        }
-//    }
-//    fun makePurchase(billingClient:BillingClient,productDetails: ProductDetails,activity: Activity) {
-//        val offerToken = productDetails.subscriptionOfferDetails?.get(0)?.offerToken
-//        val billingFlowParams = BillingFlowParams.newBuilder()
-//            .setProductDetailsParamsList(
-//                ImmutableList.of(
-//                    BillingFlowParams.ProductDetailsParams.newBuilder()
-//                        .setProductDetails(productDetails)
-//                        .setOfferToken(offerToken!!)
-//                        .build()
-//                )
-//            )
-//            .build()
-//
-//        billingClient.launchBillingFlow(activity, billingFlowParams)
-//    }
-
-    fun endConnection(billingClient: BillingClient) {
-        billingClient.endConnection()
+    fun incrementCount() {
+        viewModelScope.launch {
+            repo.dataStore.incrementConvertCount()
+        }
     }
 
-    fun verifySubPurchase(purchases: Purchase, billingClient: BillingClient, context: Context) {
-        val acknowledgePurchaseParams = AcknowledgePurchaseParams
-            .newBuilder()
-            .setPurchaseToken(purchases.purchaseToken)
-            .build()
-        billingClient.acknowledgePurchase(acknowledgePurchaseParams) { billingResult ->
-            if (billingResult.getResponseCode() === BillingClient.BillingResponseCode.OK) {
-                //user prefs to set premium
-                Toast.makeText(context, "You are a premium user now", Toast.LENGTH_SHORT)
-                    .show()
-                //Setting premium to 1
-                // 1 - premium
-                // 0 - no premium
-                // prefs.setPremium(1)
-            }
-        }
-        Log.d(TAG_BILLING, "Purchase Token: " + purchases.purchaseToken)
-        Log.d(TAG_BILLING, "Purchase Time: " + purchases.purchaseTime)
-        Log.d(TAG_BILLING, "Purchase OrderID: " + purchases.orderId)
+    fun getCount() = viewModelScope.launch {
+        contConverting.value = repo.dataStore.getConvertCount().collectAsState(initial = 0)
     }
 
 

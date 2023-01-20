@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.compose.androidtoanime.R
 import com.compose.androidtoanime.Utils.AppUtils
+import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_D
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
 import com.compose.androidtoanime.Utils.AppUtils.Companion.compressImage
 import com.compose.androidtoanime.Utils.AppUtils.Companion.hasStoragePermission
@@ -47,6 +48,7 @@ fun Upload(
 
     val context = LocalContext.current
     val isSubscribed = pricingViewModel.isSubscribe.value
+
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
     }
@@ -100,7 +102,7 @@ fun Upload(
             Toast.makeText(context, stringResource(R.string.try_later), Toast.LENGTH_SHORT).show()
     }
     BackHandler() {
-        imageUri = null
+
         //return@BackHandler
         if (viewModel.readyImage is NetworkResults.Loading) {
             Toast.makeText(context, context.getString(R.string.wait), Toast.LENGTH_SHORT).show()
@@ -109,11 +111,13 @@ fun Upload(
         if (viewModel.readyImage !is NetworkResults.NotYet) {
             //imageUri=null
             viewModel.readyImage = NetworkResults.NotYet()
-        } else{}
-            //viewModel.openExit = true
+        } else if (imageUri == null) {
+            viewModel.openExit = true
+        }
+
+        imageUri = null
 
     }
-
 
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -122,6 +126,10 @@ fun Upload(
                 imageUri = uri
         }
     )
+
+    LaunchedEffect(key1 = converting.value) {
+        viewModel.getCount()
+    }
 
     when (viewModel.readyImage) {
         is NetworkResults.Success -> {
@@ -144,7 +152,7 @@ fun Upload(
                 Permission {
                     launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
-            NotYet(imageUri = imageUri, converting, onSelect = {
+            NotYet(context = context, imageUri = imageUri, isConverting = converting, onSelect = {
                 if (hasStoragePermission(context)) {
                     imagePicker.launch("image/*")
                 } else {
@@ -156,8 +164,10 @@ fun Upload(
                     launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
                 }
             }) {
+
                 if (pathImage != null) {
-                    if (viewModel.myPhotos.size > AppUtils.MAX_PHOTO && !isSubscribed) {
+                    Log.d(TAG_D, "${viewModel.contConverting.value}")
+                    if (viewModel.contConverting.value > AppUtils.MAX_PHOTO && !isSubscribed) {
                         Toast.makeText(
                             context,
                             context.getString(R.string.upgrade_message),

@@ -46,25 +46,21 @@ fun converting(pathImage: String, context: Context) {
         )
         LoadingAnimation1()
         Text(
-            text = "Please wait for converting ...",
+            text = stringResource(R.string.wait_converting),
             style = MaterialTheme.typography.titleSmall,
             color = Color.White
         )
     }
-    Toast.makeText(context, "Loading ...", Toast.LENGTH_LONG).show()
+    Toast.makeText(context, stringResource(R.string.loading), Toast.LENGTH_LONG).show()
 }
 
-var textArray = arrayOf(
-    "Please wait ...",
-    "Scan photo ...",
-    "send request ...",
-    "AI Converting ...",
-    "Artificial intelligence is the simulation of human intelligence processes by computer systems."
-)
+
 var index = 0
 
 
 private fun getBitmapFromImage(context: Context): Bitmap {
+
+
     val option = BitmapFactory.Options()
     option.inPreferredConfig = Bitmap.Config.ARGB_8888
     val bitmap = BitmapFactory.decodeResource(
@@ -75,14 +71,17 @@ private fun getBitmapFromImage(context: Context): Bitmap {
     return bitmap.asAndroidBitmap()
 }
 
+
 @Composable
 fun NotYet(
+    context: Context,
     imageUri: Uri?,
     isConverting: MutableState<Boolean>,
     onSelect: () -> Unit,
     convert: () -> Unit
 ) {
     val TAG = "TAG_NOT_YET"
+    val textArray = context.resources.getStringArray(R.array.messages)
     val infiniteTransition = rememberInfiniteTransition()
     val offset by infiniteTransition.animateFloat(
         initialValue = 0F,
@@ -94,7 +93,7 @@ fun NotYet(
     )
 
     Log.d(TAG, "not yet")
-    val convertingText = remember { mutableStateOf("Ready") }
+    val convertingText = remember { mutableStateOf(context.getString(R.string.ready)) }
     val progress = remember { mutableStateOf(0) }
 
 
@@ -137,8 +136,9 @@ fun NotYet(
         CoroutineScope(Dispatchers.IO).launch {
             while (isConverting.value) {
                 convertingText.value = textArray[index++ % textArray.size]
-                progress.value += 10
-                delay(3000)
+                if (progress.value < 101)
+                    progress.value += (2..5).random()
+                delay(1000)
             }
         }
     }
@@ -180,24 +180,23 @@ fun NotYet(
                 .offset(y = offsetText)
         ) {
             Text(
-                text = "Anime Magic", style = MaterialTheme.typography.displaySmall,
+                text = stringResource(R.string.Heading),
+                style = MaterialTheme.typography.displaySmall,
                 color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = "Convert Your favorite photo to Anime using AI, Your photo must be clear and contain a human face, illegal photos are not accepted",
+                text = stringResource(R.string.heading_description),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.secondary
             )
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-
             ) {
             if (imageUri == null) {
                 Box(modifier = Modifier.weight(1f))
             } else {
-
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -229,7 +228,7 @@ fun NotYet(
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(modifier = Modifier.height(5.dp))
-                    valuePorcentage(progress.value)
+                    valueProgress(progress.value)
                 }
             }
 
@@ -292,7 +291,7 @@ fun myButton(modifier: Modifier, text: String?, icon: Int, onClick: () -> Unit) 
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun valuePorcentage(count: Int) {
+fun valueProgress(count: Int) {
     AnimatedContent(
         targetState = count,
         transitionSpec = {

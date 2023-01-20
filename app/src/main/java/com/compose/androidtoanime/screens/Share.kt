@@ -4,6 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,7 +26,9 @@ fun Share(viewModel: MainViewModel, pricingViewModel: PricingViewModel) {
     val context = LocalContext.current
     val myExecutor = Executors.newSingleThreadExecutor()
     val myHandler = Handler(Looper.getMainLooper())
-
+    LaunchedEffect(key1 = Unit) {
+        viewModel.incrementCount()
+    }
     Column() {
         Box(
             modifier = Modifier

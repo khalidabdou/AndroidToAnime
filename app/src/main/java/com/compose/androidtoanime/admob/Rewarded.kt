@@ -17,6 +17,7 @@ fun loadRewarded(context: Context) {
 
     if (!Rewarded.ad_status)
         return
+
     var adRequest = AdRequest.Builder().build()
     RewardedAd.load(
         context,

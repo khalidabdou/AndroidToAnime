@@ -2,6 +2,5 @@
 <resources>
 
     <style name="Theme.AndroidToAnime" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/wallpaper</item>
     </style>
 </resources>

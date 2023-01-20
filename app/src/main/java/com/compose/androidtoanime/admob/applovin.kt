@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit
 
 class applovin : MaxAdListener {
 
-
     private lateinit var interstitialAd: MaxInterstitialAd
     private var retryAttempt = 0.0
 
@@ -26,7 +25,6 @@ class applovin : MaxAdListener {
         }
         if (!interstitialAd.isReady)
             interstitialAd.loadAd()
-
 
     }
 
