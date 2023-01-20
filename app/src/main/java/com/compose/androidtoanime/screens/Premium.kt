@@ -103,13 +103,13 @@ fun Premium(navHostController: NavHostController, pricing: PricingViewModel) {
                     .fillMaxWidth()
             )
 
-            itemButton("9.99$ / WEEk", "+ 2 days free trail") {
+            itemButton("${pricing.getPrice(0)} / WEEk", "+ 2 days free trail") {
                 pricing.makePurchase(
                     0,
                     (context as Activity)
                 )
             }
-            itemButton("19.99$ / MONTH", "+ 7 days free trail") {
+            itemButton("${pricing.getPrice(1)} / MONTH", "+ 7 days free trail") {
                 pricing.makePurchase(
                     1,
                     (context as Activity)

@@ -6,7 +6,6 @@ import android.app.Application
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,6 +13,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.compose.androidtoanime.BuildConfig
 import com.compose.androidtoanime.RepositoryImpl
+import com.compose.androidtoanime.Utils.AppUtils
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
 import com.compose.androidtoanime.Utils.AppUtils.Companion.generateNewPath
 import com.compose.androidtoanime.Utils.AppUtils.Companion.saveBitmapToFile
@@ -31,6 +31,8 @@ import com.compose.androidtoanime.data.Ads
 import com.compose.androidtoanime.data.ResponsePhoto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -50,8 +52,7 @@ class MainViewModel @Inject constructor(
 
     //local
     var myPhotos by mutableStateOf(emptyList<ResponsePhoto>())
-    var contConverting = mutableStateOf(0)
-    //var countConverting = _contConverting.value
+
 
     //remote
     var readyImage by mutableStateOf<NetworkResults<ResponsePhoto>?>(NetworkResults.NotYet())
@@ -171,9 +172,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getCount() = viewModelScope.launch {
-        contConverting.value = repo.dataStore.getConvertCount().collectAsState(initial = 0)
-    }
+
+
 
 
 }

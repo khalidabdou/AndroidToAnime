@@ -2,17 +2,13 @@ package com.compose.androidtoanime.preferences.implimentation
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import com.android.billingclient.api.Purchase
 import com.google.gson.Gson
 import com.wishes.jetpackcompose.preferences.abstraction.DataRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
+import java.io.IOException
 import javax.inject.Inject
 
 
@@ -51,8 +47,17 @@ class DataStoreRepositoryImpl @Inject constructor(
 
     override suspend fun getConvertCount(): Flow<Int> {
         val preferencesKey = intPreferencesKey("count")
-        val preferences = context.dataStore.data.first()
-        return flow { emit(preferences[preferencesKey] ?: 0) }
+        return context.dataStore.data.catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }.map { preferences ->
+            val cont = preferences[preferencesKey] ?: 0
+            cont
+        }
+
 
     }
 

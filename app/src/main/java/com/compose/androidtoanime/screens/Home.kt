@@ -86,7 +86,7 @@ fun TopBar(
 //            })
         },
         navigationIcon = {
-            Spacer(modifier = Modifier.width(3.dp))
+            Spacer(modifier = Modifier.width(6.dp))
             Icon(
                 painter = painterResource(id = R.drawable.settings),
                 contentDescription = null,
@@ -115,18 +115,18 @@ fun TopBar(
                     }
             )
 
-            Spacer(modifier = Modifier.width(3.dp))
-            Icon(
-                painter = painterResource(id = R.drawable.photos),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier
-                    .size(27.dp)
-                    .padding(4.dp)
-                    .clickable {
-                        myphoto()
-                    }
-            )
+            Spacer(modifier = Modifier.width(6.dp))
+//            Icon(
+//                painter = painterResource(id = R.drawable.photos),
+//                contentDescription = null,
+//                tint = MaterialTheme.colorScheme.onBackground,
+//                modifier = Modifier
+//                    .size(27.dp)
+//                    .padding(4.dp)
+//                    .clickable {
+//                        myphoto()
+//                    }
+//            )
         }
     )
 }

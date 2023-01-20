@@ -127,9 +127,7 @@ fun Upload(
         }
     )
 
-    LaunchedEffect(key1 = converting.value) {
-        viewModel.getCount()
-    }
+
 
     when (viewModel.readyImage) {
         is NetworkResults.Success -> {
@@ -166,8 +164,7 @@ fun Upload(
             }) {
 
                 if (pathImage != null) {
-                    Log.d(TAG_D, "${viewModel.contConverting.value}")
-                    if (viewModel.contConverting.value > AppUtils.MAX_PHOTO && !isSubscribed) {
+                    if (viewModel.myPhotos.size > AppUtils.MAX_PHOTO && !isSubscribed) {
                         Toast.makeText(
                             context,
                             context.getString(R.string.upgrade_message),

@@ -80,7 +80,7 @@ fun MSplash(alpha: Float) {
     ) {
 
         Image(
-            painter = painterResource(id = R.drawable.magic),
+            painter = painterResource(id = R.drawable.ic_launcher),
             contentDescription = null
         ).animateVisibility()
 

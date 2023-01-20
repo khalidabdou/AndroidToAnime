@@ -9,6 +9,7 @@ sealed class NavRoutes(val route: String) {
     object MyPhotos : NavRoutes("my_photos")
     object Premium : NavRoutes("premium")
     object Splash : NavRoutes("splash")
+    object Chat : NavRoutes("chat")
 }
 
 

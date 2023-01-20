@@ -60,7 +60,6 @@ var index = 0
 
 private fun getBitmapFromImage(context: Context): Bitmap {
 
-
     val option = BitmapFactory.Options()
     option.inPreferredConfig = Bitmap.Config.ARGB_8888
     val bitmap = BitmapFactory.decodeResource(
@@ -136,7 +135,7 @@ fun NotYet(
         CoroutineScope(Dispatchers.IO).launch {
             while (isConverting.value) {
                 convertingText.value = textArray[index++ % textArray.size]
-                if (progress.value < 101)
+                if (progress.value < 95)
                     progress.value += (2..5).random()
                 delay(1000)
             }

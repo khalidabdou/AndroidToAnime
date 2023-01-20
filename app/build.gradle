@@ -18,8 +18,8 @@ android {
         applicationId "com.AnimeMagic.ai"
         minSdk 23
         targetSdk 33
-        versionCode 6
-        versionName "6.0"
+        versionCode 7
+        versionName "7.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -133,10 +133,5 @@ dependencies {
 
     //implementation "org.koin:koin-core:$koin_version"
     implementation "io.insert-koin:koin-core:3.0.1"
-
-
-
-
-
 }
 

@@ -17,7 +17,7 @@ fun NavigationHost(navController: NavHostController, viewModel: MainViewModel,pr
 
     NavHost(
         navController = navController,
-        startDestination = NavRoutes.Splash.route,
+        startDestination = NavRoutes.Chat.route,
     ) {
         composable(NavRoutes.Splash.route) {
             Splash(navController, viewModel,pricingViewModel)
@@ -41,5 +41,9 @@ fun NavigationHost(navController: NavHostController, viewModel: MainViewModel,pr
         composable(NavRoutes.Premium.route) {
             Premium(navController, pricingViewModel)
         }
+        composable(NavRoutes.Chat.route) {
+            Chat()
+        }
+
     }
 }

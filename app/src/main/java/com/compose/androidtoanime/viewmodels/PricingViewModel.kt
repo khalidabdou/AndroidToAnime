@@ -108,8 +108,13 @@ class PricingViewModel @Inject constructor(
             } else
                 Log.d(TAG_BILLING, "checkSubscription ${purchaes.value}")
         }
-
     }
+
+    fun getPrice(tokenId: Int):String{
+        val  details=productList[0]!!.subscriptionOfferDetails?.get(tokenId)
+        return "${details!!.pricingPhases.pricingPhaseList[0].formattedPrice} "
+    }
+
 
 }
 
