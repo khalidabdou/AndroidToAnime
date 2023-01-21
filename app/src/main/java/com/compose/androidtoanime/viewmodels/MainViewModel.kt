@@ -13,7 +13,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.compose.androidtoanime.BuildConfig
 import com.compose.androidtoanime.RepositoryImpl
-import com.compose.androidtoanime.Utils.AppUtils
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
 import com.compose.androidtoanime.Utils.AppUtils.Companion.generateNewPath
 import com.compose.androidtoanime.Utils.AppUtils.Companion.saveBitmapToFile
@@ -29,10 +28,9 @@ import com.compose.androidtoanime.data.AdProvider.Companion.OpenAd
 import com.compose.androidtoanime.data.AdProvider.Companion.Rewarded
 import com.compose.androidtoanime.data.Ads
 import com.compose.androidtoanime.data.ResponsePhoto
+import com.compose.androidtoanime.data.model.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -52,6 +50,9 @@ class MainViewModel @Inject constructor(
 
     //local
     var myPhotos by mutableStateOf(emptyList<ResponsePhoto>())
+
+    private var _message by mutableStateOf<NetworkResults<Message>>(NetworkResults.NotYet())
+    var messages = mutableListOf<Message>(Message("How I can help you", "chatBot", "Now"))
 
 
     //remote
@@ -100,7 +101,6 @@ class MainViewModel @Inject constructor(
     private fun insertPhoto(photo: ResponsePhoto) = viewModelScope.launch {
         repo.localData.insertPhoto(photo)
     }
-
 
     fun getAds() = viewModelScope.launch {
         Log.d("ads", "begin==p===")
@@ -158,13 +158,11 @@ class MainViewModel @Inject constructor(
         repo.localData.delete(photo)
     }
 
-
     fun getUrl(): String {
         val data = readyImage!!.data
         image = BuildConfig.api + data?.folder + "crop" + data?.filename
         return image
     }
-
 
     fun incrementCount() {
         viewModelScope.launch {
@@ -172,8 +170,14 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun sendMessage(message: Message) {
+        messages.add(message)
+        Log.d("message_debug", messages.size.toString())
+    }
 
-
+//    fun getMessages():Messages?{
+//        return _messages
+//    }
 
 
 }

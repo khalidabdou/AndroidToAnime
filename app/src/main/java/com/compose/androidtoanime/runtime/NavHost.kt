@@ -42,7 +42,7 @@ fun NavigationHost(navController: NavHostController, viewModel: MainViewModel,pr
             Premium(navController, pricingViewModel)
         }
         composable(NavRoutes.Chat.route) {
-            Chat()
+            Chat(viewModel)
         }
 
     }
