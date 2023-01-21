@@ -7,6 +7,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
@@ -52,7 +53,7 @@ class MainViewModel @Inject constructor(
     var myPhotos by mutableStateOf(emptyList<ResponsePhoto>())
 
     private var _message by mutableStateOf<NetworkResults<Message>>(NetworkResults.NotYet())
-    var messages = mutableListOf<Message>(Message("How I can help you", "chatBot", "Now"))
+    var messages =  mutableStateListOf(Message("How I can help you", "chatBot", "Now"))
 
 
     //remote
@@ -175,9 +176,6 @@ class MainViewModel @Inject constructor(
         Log.d("message_debug", messages.size.toString())
     }
 
-//    fun getMessages():Messages?{
-//        return _messages
-//    }
 
 
 }

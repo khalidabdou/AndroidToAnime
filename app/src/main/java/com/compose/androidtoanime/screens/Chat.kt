@@ -3,11 +3,10 @@ package com.compose.androidtoanime.screens
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -43,11 +42,12 @@ fun Chat(viewModel: MainViewModel) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    var currentMessages = remember {
+    val currentMessages = remember {
+        //mutableStateListOf(Message("How I can help you", "chatBot", "Now"))
         viewModel.messages
     }
-    for (message in arrayMessages())
-        viewModel.sendMessage(message)
+//    for (message in arrayMessages())
+//        viewModel.sendMessage(message)
 
     Column(modifier = Modifier.fillMaxSize()) {
         Appbar()
@@ -55,12 +55,12 @@ fun Chat(viewModel: MainViewModel) {
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
-            currentMessages.toList(),
+            currentMessages,
             listState
         )
         BottomChat() {
             viewModel.sendMessage(Message(it.text, it.sender, it.timestamp))
-            currentMessages.add(Message(it.text, it.sender, it.timestamp))
+            //currentMessages.add(Message(it.text, it.sender, it.timestamp))
             coroutineScope.launch {
                 listState.animateScrollToItem(currentMessages.size - 1)
             }
@@ -129,41 +129,47 @@ fun Appbar() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ChatBody(modifier: Modifier, messages: List<Message>, state: LazyListState) {
-    LazyColumn(
+fun ChatBody(modifier: Modifier, messages: MutableList<Message>, state: LazyListState) {
+    Box(
         modifier = modifier,
-        state = state
+        contentAlignment = Alignment.BottomCenter
     ) {
-        item() {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.chatbot),
-                    contentDescription = null,
-                    modifier = Modifier.size(100.dp)
+        LazyColumn(
+            modifier = Modifier,
+            state = state
+        ) {
+            item() {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.chatbot),
+                        contentDescription = null,
+                        modifier = Modifier.size(100.dp)
+                    )
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Text(text = "Start chat with AnimeBot")
+                }
+            }
+            items(messages.size) {
+                if (messages[it].sender == "chatBot")
+                    ChatBot(messages[it])
+                else
+                    User(messages[it])
+            }
+            item {
+                Text(
+                    text = "typing ...",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(16.dp)
                 )
-                Spacer(modifier = Modifier.height(15.dp))
-                Text(text = "Start chat with AnimeBot")
             }
         }
-        items(messages.size) {
-            if (messages[it].sender == "chatBot")
-                ChatBot(messages[it])
-            else
-                User(messages[it])
-        }
-        item {
-            Text(
-                text = "typing ...",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
     }
+
 }
 
 @Composable
@@ -173,12 +179,15 @@ fun ChatBot(message: Message) {
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .padding(10.dp)
-                .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 40.dp, bottomEnd = 40.dp))
-                .background(MaterialTheme.colorScheme.onBackground)
+                .border(
+                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.primary.copy(0.5f)),
+                    RoundedCornerShape(topStart = 10.dp, topEnd = 40.dp, bottomEnd = 40.dp)
+                )
+
         ) {
             Text(
                 text = message.text,
-                color = MaterialTheme.colorScheme.background,
+                color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
@@ -248,10 +257,10 @@ fun BottomChat(addMessage: (Message) -> Unit) {
             interactionSource = MutableInteractionSource(),
             shape = RoundedCornerShape(10.dp),
             colors = TextFieldDefaults.textFieldColors(
-                textColor = MaterialTheme.colorScheme.background,
+                textColor = MaterialTheme.colorScheme.onBackground,
                 cursorColor = MaterialTheme.colorScheme.background,
                 disabledTextColor = Color.Transparent,
-                containerColor = MaterialTheme.colorScheme.onBackground,
+                containerColor = MaterialTheme.colorScheme.onBackground.copy(0.2f),
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
@@ -261,9 +270,9 @@ fun BottomChat(addMessage: (Message) -> Unit) {
                     imageVector = Icons.Default.Send,
                     contentDescription = "send",
                     tint = if (inputValue.isNotBlank()) {
-                        MaterialTheme.colorScheme.background
+                        MaterialTheme.colorScheme.primary
                     } else {
-                        MaterialTheme.colorScheme.background.copy(0.5f)
+                        MaterialTheme.colorScheme.primary.copy(0.5f)
                     },
                     modifier = Modifier.clickable {
                         if (inputValue.isNotBlank()) {
