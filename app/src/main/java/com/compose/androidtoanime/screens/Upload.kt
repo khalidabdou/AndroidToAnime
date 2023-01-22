@@ -139,10 +139,7 @@ fun Upload(
 
         else -> {
             converting.value = viewModel.readyImage is NetworkResults.Loading
-            if (openPermission)
-                Permission {
-                    launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                }
+
             NotYet(
                 context = context,
                 imageUri = imageUri,
@@ -159,7 +156,7 @@ fun Upload(
                             context.getString(R.string.permission),
                             Toast.LENGTH_SHORT
                         ).show()
-                        launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     }
                 }) {
 

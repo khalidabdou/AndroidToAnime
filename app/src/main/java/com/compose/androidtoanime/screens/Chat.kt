@@ -417,10 +417,10 @@ fun TypewriterText(
                         startIndex = 0,
                         endIndex = charIndex + 1,
                     )
-                delay(100)
+                delay(50)
             }
             textIndex = (textIndex + 1) % texts.size
-            delay(1000)
+            delay(3000)
         }
     }
 
@@ -430,7 +430,6 @@ fun TypewriterText(
         textAlign = TextAlign.Center,
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
             .padding(16.dp)
     )
 }

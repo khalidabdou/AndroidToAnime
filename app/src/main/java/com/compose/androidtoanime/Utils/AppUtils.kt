@@ -89,8 +89,7 @@ class AppUtils {
             return (ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-                    == PackageManager.PERMISSION_GRANTED)
+            ) == PackageManager.PERMISSION_GRANTED)
         }
 
         fun compressImage(imageFilePath: String, isSubscribed: Boolean = false): Bitmap? {

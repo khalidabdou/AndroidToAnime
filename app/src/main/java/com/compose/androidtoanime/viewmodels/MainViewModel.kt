@@ -83,13 +83,11 @@ class MainViewModel @Inject constructor(
 
         val fileTemp = File(newpath)
         Files.createFile(fileTemp.toPath())
-
         val file = saveBitmapToFile(bitmap, fileTemp)
-
         readyImage = NetworkResults.Loading()
         val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file!!)
         val body = MultipartBody.Part.createFormData("file", file!!.name, requestFile)
-        val res = repo.remote.convert(body)
+        val res = if (!isSubscribe.value) repo.remote.convert(body) else repo.remote.premium(body)
         readyImage = HandleResponse(res).handleResult()
         if (readyImage is NetworkResults.Success) {
             if (readyImage != null && (readyImage as NetworkResults.Success<ResponsePhoto>).data != null)
@@ -186,7 +184,7 @@ class MainViewModel @Inject constructor(
 
         message.timestamp = "$current"
         messages.add(message)
-        if (messages.size > 5 && !isSubscribe) {
+        if (messages.size > 15 && !isSubscribe) {
             val subscribe = context.resources.getStringArray(R.array.subscribe_messages)
 
             _message = NetworkResults.Loading()

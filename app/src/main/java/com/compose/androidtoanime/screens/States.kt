@@ -91,6 +91,7 @@ fun NotYet(
             repeatMode = RepeatMode.Reverse
         )
     )
+    val description= context.resources.getStringArray(R.array.home_description)
 
     Log.d(TAG, "not yet")
     val convertingText = remember { mutableStateOf(context.getString(R.string.ready)) }
@@ -185,11 +186,13 @@ fun NotYet(
                 color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                text = stringResource(R.string.heading_description),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.secondary
-            )
+
+            TypewriterText(description.toList())
+//            Text(
+//                text = stringResource(R.string.heading_description),
+//                style = MaterialTheme.typography.titleMedium,
+//                color = MaterialTheme.colorScheme.secondary
+//            )
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
