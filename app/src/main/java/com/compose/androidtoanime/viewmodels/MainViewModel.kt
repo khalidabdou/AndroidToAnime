@@ -3,6 +3,8 @@ package com.compose.androidtoanime.viewmodels
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.Context
+import android.media.MediaPlayer
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -13,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.compose.androidtoanime.BuildConfig
+import com.compose.androidtoanime.R
 import com.compose.androidtoanime.RepositoryImpl
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
 import com.compose.androidtoanime.Utils.AppUtils.Companion.generateNewPath
@@ -32,6 +35,7 @@ import com.compose.androidtoanime.data.ResponsePhoto
 import com.compose.androidtoanime.data.model.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -39,6 +43,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 import java.nio.file.Files
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 
@@ -52,9 +58,9 @@ class MainViewModel @Inject constructor(
     //local
     var myPhotos by mutableStateOf(emptyList<ResponsePhoto>())
 
-    private var _message by mutableStateOf<NetworkResults<Message>>(NetworkResults.NotYet())
-    var messages =  mutableStateListOf(Message("How I can help you", "chatBot", "Now"))
-
+    var _message by mutableStateOf<NetworkResults<Message>>(NetworkResults.NotYet())
+    var messages = mutableStateListOf(Message("How can I help you", "AnimeBot", "Now"))
+    //val messageState= mutableStateOf(NetworkResults.NotYet())
 
     //remote
     var readyImage by mutableStateOf<NetworkResults<ResponsePhoto>?>(NetworkResults.NotYet())
@@ -171,11 +177,59 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun sendMessage(message: Message) {
-        messages.add(message)
-        Log.d("message_debug", messages.size.toString())
-    }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun sendMessage(isSubscribe: Boolean, message: Message, context: Context) {
+
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        val current = LocalDateTime.now().format(formatter)
+
+        message.timestamp = "$current"
+        messages.add(message)
+        if (messages.size > 5 && !isSubscribe) {
+            val subscribe = context.resources.getStringArray(R.array.subscribe_messages)
+
+            _message = NetworkResults.Loading()
+            val subscribeMessage = Message(
+                subscribe.random(),
+                "AnimeBot",
+                current
+            )
+            viewModelScope.launch {
+                delay(2000)
+                messages.add(subscribeMessage)
+                _message = NetworkResults.NotYet()
+                val mediaPlayer = MediaPlayer.create(context, R.raw.pop)
+                mediaPlayer.start()
+            }
+            return
+        }
+        viewModelScope.launch {
+            _message = NetworkResults.Loading()
+            val body = MultipartBody.Part.createFormData("question", message.text)
+            val response = repo.remote.sendMessage(body)
+            _message = HandleResponse(response).handleResult()
+            if (_message is NetworkResults.Success) {
+
+                var animeBotAnswer =
+                    Message(_message.data!!.text.replace("\n", ""), "AnimeBot", "10:00")
+                animeBotAnswer.text = animeBotAnswer.text.substringAfter(":")
+                animeBotAnswer.timestamp = "$current"
+                messages.add(animeBotAnswer)
+                _message = NetworkResults.NotYet()
+                val mediaPlayer = MediaPlayer.create(context, R.raw.pop)
+                mediaPlayer.start()
+
+            } else if (_message is NetworkResults.Error) {
+                val animeBotAnswer =
+                    Message("offline", "AnimeBot", current)
+                messages.add(animeBotAnswer)
+                _message = NetworkResults.NotYet()
+            }
+            //Log.d("message_debug", _message.data!!.text)
+        }
+
+    }
 
 
 }

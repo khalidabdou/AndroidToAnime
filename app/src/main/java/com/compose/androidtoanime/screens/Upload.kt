@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.compose.androidtoanime.R
 import com.compose.androidtoanime.Utils.AppUtils
-import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_D
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
 import com.compose.androidtoanime.Utils.AppUtils.Companion.compressImage
 import com.compose.androidtoanime.Utils.AppUtils.Companion.hasStoragePermission
@@ -66,6 +65,7 @@ fun Upload(
         viewModel.getPhotos()
     })
     var pathImage: String? = null
+
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -93,7 +93,6 @@ fun Upload(
         )
     )
 
-
     if (imageUri != null) {
         if (hasStoragePermission(context)) {
             pathImage = FileUtil(context).getPath(imageUri!!)
@@ -102,7 +101,6 @@ fun Upload(
             Toast.makeText(context, stringResource(R.string.try_later), Toast.LENGTH_SHORT).show()
     }
     BackHandler() {
-
         //return@BackHandler
         if (viewModel.readyImage is NetworkResults.Loading) {
             Toast.makeText(context, context.getString(R.string.wait), Toast.LENGTH_SHORT).show()
@@ -127,8 +125,6 @@ fun Upload(
         }
     )
 
-
-
     when (viewModel.readyImage) {
         is NetworkResults.Success -> {
             Share(viewModel = viewModel, pricingViewModel)
@@ -140,9 +136,6 @@ fun Upload(
             viewModel.readyImage = NetworkResults.NotYet()
             converting.value = false
         }
-//        is NetworkResults.Loading -> {
-//            pathImage?.let { converting(it, context) }
-//        }
 
         else -> {
             converting.value = viewModel.readyImage is NetworkResults.Loading
@@ -150,18 +143,25 @@ fun Upload(
                 Permission {
                     launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
-            NotYet(context = context, imageUri = imageUri, isConverting = converting, onSelect = {
-                if (hasStoragePermission(context)) {
-                    imagePicker.launch("image/*")
-                } else {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.permission),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                }
-            }) {
+            NotYet(
+                context = context,
+                imageUri = imageUri,
+                isConverting = converting,
+                animeBot = {
+                    navController.navigate(NavRoutes.Chat.route)
+                },
+                onSelect = {
+                    if (hasStoragePermission(context)) {
+                        imagePicker.launch("image/*")
+                    } else {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.permission),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    }
+                }) {
 
                 if (pathImage != null) {
                     if (viewModel.myPhotos.size > AppUtils.MAX_PHOTO && !isSubscribed) {

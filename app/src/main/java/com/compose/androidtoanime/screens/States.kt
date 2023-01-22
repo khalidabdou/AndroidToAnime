@@ -77,6 +77,7 @@ fun NotYet(
     imageUri: Uri?,
     isConverting: MutableState<Boolean>,
     onSelect: () -> Unit,
+    animeBot: () -> Unit,
     convert: () -> Unit
 ) {
     val TAG = "TAG_NOT_YET"
@@ -192,7 +193,7 @@ fun NotYet(
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
+        ) {
             if (imageUri == null) {
                 Box(modifier = Modifier.weight(1f))
             } else {
@@ -236,23 +237,33 @@ fun NotYet(
                     .fillMaxWidth()
                     .padding(10.dp), horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                if (imageUri == null)
-                    myButton(
-                        modifier = Modifier,
-                        text = stringResource(R.string.upload),
-                        icon = R.drawable.gallery
+                if (imageUri == null) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        onSelect()
+                        myButton(
+                            modifier = Modifier,
+                            text = stringResource(R.string.upload),
+                            icon = R.drawable.gallery
+                        ) {
+                            onSelect()
+                        }
+                        myButton(
+                            modifier = Modifier,
+                            text = stringResource(R.string.chat),
+                            icon = R.drawable.ai
+                        ) {
+                            animeBot()
+                        }
                     }
-                else {
+                } else {
                     myButton(
                         modifier = Modifier.offset(y = offsetButton),
                         stringResource(R.string.convert),
                         R.drawable.convert
                     ) {
-
-                    convert()
-
+                        convert()
                     }
                 }
             }

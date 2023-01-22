@@ -51,7 +51,6 @@ class MainActivity : ComponentActivity() {
                 val pricingViewModel: PricingViewModel = hiltViewModel()
                 val navController = rememberNavController()
                 val context = LocalContext.current
-
                 //pricingViewModel.getProducts()
 
                 val isSubscribe = remember {

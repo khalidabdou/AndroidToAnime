@@ -35,12 +35,32 @@
     <string name="ready">Ready</string>
     <string name="Heading">Anime Magic</string>
     <string name="heading_description">Convert Your favorite photo to Anime using AI, Your photo must be clear and contain a human face, illegal photos are not accepted</string>
-
+    <string name="chat">AnimeBot</string>
 
     <array name="messages">
         <item>Please Wait ...</item>
         <item>Scan photo ...</item>
         <item>Send request ...</item>
         <item>AI Converting ...</item>
+    </array>
+
+    <array name="subscribe_messages">
+        <item>📣Need subscribe</item>
+        <item>Need subscribe to continue 💡Don\'t miss out, subscribe now</item>
+        <item>Need subscribe to continue 📅Stay updated, subscribe today</item>
+        <item>Need subscribe to continue 🔥Be the first to know, subscribe now!</item>
+        <item>Need subscribe to continue 📈Stay ahead of the game, subscribe today!</item>
+        <item>Need subscribe to continue 📩Don\'t miss a single update, subscribe now!</item>
+        <item>Need subscribe to continue 🔔Never miss a notification, subscribe today!</item>
+        <item>Need subscribe to continue 📣Don\'t miss out on exclusive content, subscribe now!
+        </item>
+
+    </array>
+
+    <array name="animeBot">
+        <item>🤔 How can I assist you today?</item>
+        <item>📚 I can assist you with your homework!</item>
+        <item>💬 I\'m here to answer all your questions!</item>
+        <item>🤝 Subscribe to have me as your helpful companion!</item>
     </array>
 </resources>

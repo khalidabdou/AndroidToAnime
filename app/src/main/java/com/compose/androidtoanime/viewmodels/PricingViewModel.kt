@@ -11,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import com.android.billingclient.api.*
 import com.compose.androidtoanime.RepositoryImpl
 import com.compose.androidtoanime.Utils.AppUtils.Companion.TAG_BILLING
-import com.compose.androidtoanime.Utils.startBillingConnection
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -47,9 +46,8 @@ class PricingViewModel @Inject constructor(
     }
 
 
-
-    fun makePurchase(tokenId:Int,activity: Activity) =
-        repo.pricingRepositoryImpl.makePurchase(tokenId,activity, productList[0]!!)
+    fun makePurchase(tokenId: Int, activity: Activity) =
+        repo.pricingRepositoryImpl.makePurchase(tokenId, activity, productList[0]!!)
 
 
     fun handlePurchase() = runBlocking {
@@ -63,8 +61,6 @@ class PricingViewModel @Inject constructor(
         verifySubPurchase(saved)
         //val isp=repo.pricingRepositoryImpl.acknowledgePurchase(saved)
         Log.d(TAG_BILLING, "saved $saved")
-        //Log.d(TAG_BILLING, "results $isp")
-        //isSubscribe.value =
 
         val params = QueryPurchaseHistoryParams.newBuilder()
             .setProductType(BillingClient.ProductType.SUBS)
@@ -83,14 +79,12 @@ class PricingViewModel @Inject constructor(
         billingClient.acknowledgePurchase(
             acknowledgePurchaseParams
         ) { billingResult: BillingResult ->
-            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases.purchaseState==Purchase.PurchaseState.PURCHASED) {
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases.purchaseState == Purchase.PurchaseState.PURCHASED) {
                 isSubscribe.value = true
                 Log.d(TAG_BILLING, "Subscription activated, Enjoy!" + purchases.purchaseToken)
             }
         }
-        Log.d(TAG_BILLING, "Purchase Token: " + purchases.purchaseToken)
-        Log.d(TAG_BILLING, "Purchase Time: " + purchases.purchaseTime)
-        Log.d(TAG_BILLING, "Purchase OrderID: " + purchases.orderId)
+
     }
 
     init {
@@ -110,8 +104,8 @@ class PricingViewModel @Inject constructor(
         }
     }
 
-    fun getPrice(tokenId: Int):String{
-        val  details=productList[0]!!.subscriptionOfferDetails?.get(tokenId)
+    fun getPrice(tokenId: Int): String {
+        val details = productList[0]!!.subscriptionOfferDetails?.get(tokenId)
         return "${details!!.pricingPhases.pricingPhaseList[0].formattedPrice} "
     }
 

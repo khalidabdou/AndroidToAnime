@@ -13,14 +13,18 @@ import com.compose.androidtoanime.viewmodels.PricingViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NavigationHost(navController: NavHostController, viewModel: MainViewModel,pricingViewModel: PricingViewModel) {
+fun NavigationHost(
+    navController: NavHostController,
+    viewModel: MainViewModel,
+    pricingViewModel: PricingViewModel
+) {
 
     NavHost(
         navController = navController,
-        startDestination = NavRoutes.Chat.route,
+        startDestination = NavRoutes.Splash.route,
     ) {
         composable(NavRoutes.Splash.route) {
-            Splash(navController, viewModel,pricingViewModel)
+            Splash(navController, viewModel, pricingViewModel)
         }
 
         composable(NavRoutes.Home.route) {
@@ -42,7 +46,7 @@ fun NavigationHost(navController: NavHostController, viewModel: MainViewModel,pr
             Premium(navController, pricingViewModel)
         }
         composable(NavRoutes.Chat.route) {
-            Chat(viewModel)
+            Chat(viewModel, pricingViewModel, navController)
         }
 
     }

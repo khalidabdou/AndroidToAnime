@@ -7,9 +7,9 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 class Message(
     @SerializedName("message")
-    val text: String,
-    val sender: String,
-    val timestamp: String
+    var text: String,
+    val sender: String?,
+    var timestamp: String?
 ) : Parcelable
 
 class Messages(

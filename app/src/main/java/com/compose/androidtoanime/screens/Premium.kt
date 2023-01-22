@@ -1,6 +1,8 @@
 package com.compose.androidtoanime.screens
 
 import android.app.Activity
+import android.view.Window
+import android.view.WindowManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,16 +20,31 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.compose.androidtoanime.R
 import com.compose.androidtoanime.viewmodels.PricingViewModel
+
+fun gradientStatusBar(activity: Activity) {
+    val window: Window = activity.window
+    val background = ContextCompat.getDrawable(activity, R.drawable.wallpaper)
+    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
+    window.statusBarColor = ContextCompat.getColor(activity, android.R.color.transparent)
+    window.navigationBarColor = ContextCompat.getColor(activity, android.R.color.transparent)
+    window.setBackgroundDrawable(background)
+}
 
 @Composable
 fun Premium(navHostController: NavHostController, pricing: PricingViewModel) {
@@ -35,8 +52,10 @@ fun Premium(navHostController: NavHostController, pricing: PricingViewModel) {
     val isSubscribe = remember {
         derivedStateOf { pricing.isSubscribe.value }
     }
+    //gradientStatusBar(context as Activity)
     if (isSubscribe.value)
         Subscribed()
+
     else
         Column(modifier = Modifier.fillMaxSize()) {
             Box(
@@ -79,12 +98,43 @@ fun Premium(navHostController: NavHostController, pricing: PricingViewModel) {
                         },
                 )
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Text(
+                    text = "AnimeMagic ",
+                    style = MaterialTheme.typography.headlineLarge,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+
+                )
+                Text(
+                    text = "PRO",
+                    style = MaterialTheme.typography.headlineLarge,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .graphicsLayer(alpha = 0.99f)
+                        .drawWithCache {
+                            val brush = Brush.horizontalGradient(
+                                listOf(
+                                    Color.Yellow,
+                                    Color.Magenta
+                                )
+                            )
+                            onDrawWithContent {
+                                drawContent()
+                                drawRect(brush, blendMode = BlendMode.SrcAtop)
+                            }
+                        }
+
+                )
+            }
+
             Column(modifier = Modifier.padding(start = 60.dp, top = 20.dp)) {
                 itemSub("Unlimited")
                 itemSub("Remove Ads")
                 itemSub("Remove watermark")
                 itemSub("Photos High Quality")
-                itemSub("Speed Converting")
+                itemSub("Unlimited Chat AI")
             }
             Spacer(modifier = Modifier.height(40.dp))
             Text(
@@ -103,13 +153,13 @@ fun Premium(navHostController: NavHostController, pricing: PricingViewModel) {
                     .fillMaxWidth()
             )
 
-            itemButton("${pricing.getPrice(0)} / WEEk", "+ 2 days free trail") {
+            itemButton("${pricing.getPrice(0)} / WEEk", "Auto-renewable") {
                 pricing.makePurchase(
                     0,
                     (context as Activity)
                 )
             }
-            itemButton("${pricing.getPrice(1)} / MONTH", "+ 7 days free trail") {
+            itemButton("${pricing.getPrice(1)} / MONTH", "cancel anytime") {
                 pricing.makePurchase(
                     1,
                     (context as Activity)

@@ -1,12 +1,16 @@
 package com.compose.androidtoanime.screens
 
+import android.content.Context
+import android.media.MediaPlayer
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -21,22 +25,37 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode.Companion.SrcAtop
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.compose.androidtoanime.R
+import com.compose.androidtoanime.Utils.AppUtils
+import com.compose.androidtoanime.Utils.NetworkResults
 import com.compose.androidtoanime.data.model.Message
 import com.compose.androidtoanime.viewmodels.MainViewModel
+import com.compose.androidtoanime.viewmodels.PricingViewModel
+import com.wishes.jetpackcompose.runtime.NavRoutes
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.util.*
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Chat(viewModel: MainViewModel) {
+fun Chat(
+    viewModel: MainViewModel,
+    pricingViewModel: PricingViewModel,
+    navController: NavHostController
+) {
 
     val listState = LazyListState()
     val context = LocalContext.current
@@ -46,25 +65,45 @@ fun Chat(viewModel: MainViewModel) {
         //mutableStateListOf(Message("How I can help you", "chatBot", "Now"))
         viewModel.messages
     }
-//    for (message in arrayMessages())
-//        viewModel.sendMessage(message)
+    val textArray = context.resources.getStringArray(R.array.animeBot)
+    LaunchedEffect(key1 = viewModel.messages.size) {
+        Log.d(AppUtils.TAG_D, "to bottom")
+        listState.animateScrollToItem(currentMessages.size - 1)
+    }
+    LaunchedEffect(key1 = Unit) {
+        val mediaPlayer = MediaPlayer.create(context, R.raw.pop)
+        mediaPlayer.start()
+        listState.animateScrollToItem(currentMessages.size - 1)
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Appbar()
+        Appbar(
+            pricingViewModel.isSubscribe.value,
+            onBack = { navController.popBackStack() },
+            goToPro = {
+                navController.navigate(NavRoutes.Premium.route)
+            })
         ChatBody(
+            context = context,
+            textArray.toList(),
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
+            (viewModel._message is NetworkResults.Loading),
             currentMessages,
             listState
         )
         BottomChat() {
-            viewModel.sendMessage(Message(it.text, it.sender, it.timestamp))
+            viewModel.sendMessage(
+                pricingViewModel.isSubscribe.value,
+                Message(it.text, it.sender, it.timestamp),
+                context
+            )
             //currentMessages.add(Message(it.text, it.sender, it.timestamp))
             coroutineScope.launch {
                 listState.animateScrollToItem(currentMessages.size - 1)
             }
-            Log.d("message", it.sender)
+            Log.d("message", "{$it.sender}")
         }
     }
     LaunchedEffect(key1 = Unit) {
@@ -77,13 +116,17 @@ fun Chat(viewModel: MainViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Appbar() {
+fun Appbar(isSubscribe: Boolean, onBack: () -> Unit, goToPro: () -> Unit) {
     TopAppBar(
         navigationIcon = {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "back",
-                modifier = Modifier.padding(start = 6.dp)
+                modifier = Modifier
+                    .padding(start = 6.dp)
+                    .clickable {
+                        onBack()
+                    }
             )
         },
         title = {
@@ -122,14 +165,54 @@ fun Appbar() {
 
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors()
+        colors = TopAppBarDefaults.topAppBarColors(),
+        actions = {
+            if (!isSubscribe)
+                Box(modifier = Modifier.padding(6.dp)) {
+                    Image(
+                        painter = painterResource(id = R.drawable.premium),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(37.dp)
+                            .padding(6.dp)
+                            .graphicsLayer(alpha = 0.99f)
+                            .drawWithCache {
+                                val brush = Brush.horizontalGradient(
+                                    listOf(
+                                        Color.Yellow,
+                                        Color.Magenta
+                                    )
+                                )
+                                onDrawWithContent {
+                                    drawContent()
+                                    drawRect(brush, blendMode = SrcAtop)
+                                }
+                            }
+                            .clickable {
+                                goToPro()
+                            }
+                    )
+                }
+
+        }
 
     )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ChatBody(modifier: Modifier, messages: MutableList<Message>, state: LazyListState) {
+fun ChatBody(
+    context: Context,
+    textArray: List<String>,
+    modifier: Modifier, typing: Boolean,
+    messages: MutableList<Message>,
+    state: LazyListState
+) {
+    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+    val offsetTyping by animateDpAsState(
+        targetValue = if (!typing) -100.dp else 0.dp,
+        tween(1000)
+    )
     Box(
         modifier = modifier,
         contentAlignment = Alignment.BottomCenter
@@ -151,12 +234,15 @@ fun ChatBody(modifier: Modifier, messages: MutableList<Message>, state: LazyList
                         modifier = Modifier.size(100.dp)
                     )
                     Spacer(modifier = Modifier.height(15.dp))
-                    Text(text = "Start chat with AnimeBot")
+                    TypewriterText(texts = textArray)
                 }
             }
             items(messages.size) {
-                if (messages[it].sender == "chatBot")
-                    ChatBot(messages[it])
+                if (messages[it].sender == "AnimeBot")
+                    ChatBot(messages[it]) {
+                        clipboardManager.setText(AnnotatedString(it))
+                        Toast.makeText(context, "Copied to Clipboard", Toast.LENGTH_SHORT).show()
+                    }
                 else
                     User(messages[it])
             }
@@ -164,7 +250,9 @@ fun ChatBody(modifier: Modifier, messages: MutableList<Message>, state: LazyList
                 Text(
                     text = "typing ...",
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .offset(offsetTyping)
                 )
             }
         }
@@ -172,8 +260,9 @@ fun ChatBody(modifier: Modifier, messages: MutableList<Message>, state: LazyList
 
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ChatBot(message: Message) {
+fun ChatBot(message: Message, onLongClick: (String) -> Unit) {
     Column(modifier = Modifier.padding(9.dp)) {
         Box(
             modifier = Modifier
@@ -192,6 +281,12 @@ fun ChatBot(message: Message) {
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .padding(10.dp)
+                    .combinedClickable(
+                        onClick = { },
+                        onLongClick = {
+                            onLongClick(message.text)
+                        },
+                    )
             )
         }
         Text(
@@ -253,9 +348,17 @@ fun BottomChat(addMessage: (Message) -> Unit) {
             value = inputValue,
             onValueChange = { inputValue = it },
             keyboardOptions = KeyboardOptions(imeAction = androidx.compose.ui.text.input.ImeAction.Send),
-            keyboardActions = KeyboardActions { sendMessage() },
+            keyboardActions = KeyboardActions {
+                if (inputValue.isNotBlank()) {
+                    val message = Message(inputValue, "you", "10:12")
+                    //chat.addMessage(inputValue, "you", "10:12")
+                    addMessage(message)
+                    inputValue = ""
+                    //Log.d("message_debug",message.toString())
+                }
+            },
             interactionSource = MutableInteractionSource(),
-            shape = RoundedCornerShape(10.dp),
+            shape = RoundedCornerShape(20.dp),
             colors = TextFieldDefaults.textFieldColors(
                 textColor = MaterialTheme.colorScheme.onBackground,
                 cursorColor = MaterialTheme.colorScheme.background,
@@ -263,8 +366,9 @@ fun BottomChat(addMessage: (Message) -> Unit) {
                 containerColor = MaterialTheme.colorScheme.onBackground.copy(0.2f),
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            ),
+                disabledIndicatorColor = Color.Transparent,
+
+                ),
             trailingIcon = {
                 Icon(
                     imageVector = Icons.Default.Send,
@@ -291,52 +395,46 @@ fun BottomChat(addMessage: (Message) -> Unit) {
     }
 }
 
-class ChatClass {
-    val messages = arrayListOf<Message>()
 
-    fun addMessage(text: String, sender: String, timestamp: String) {
-        val message = Message(text, sender, timestamp)
-        messages.add(message)
+@Composable
+fun TypewriterText(
+    texts: List<String>,
+) {
+    var textIndex by remember {
+        mutableStateOf(0)
     }
-}
-
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun arrayMessages(): ArrayList<Message> {
-    val chat = ArrayList<Message>()
-    chat.add(
-        Message(
-            "Hello!",
-            "you",
-            "10:00 AM"
-        )
-    )
-    //generateMessages(chat)
-    return chat
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun generateMessages(chat: ArrayList<Message>) {
-
-    val random = Random()
-    val messages = arrayOf(
-        "Hey, what's up?",
-        "How's your day going?",
-        "I had a great time last night",
-        "I'm running late",
-        "Let's meet at 5 PM",
-        "Did you see the latest news?",
-        "Can you send me that file?",
-        "I'm on my way",
-        "Okay, talk to you later",
-        "Goodnight!"
-    )
-    val senders = arrayOf("chatBot", "you")
-
-    for (i in 1..40) {
-        val messageIndex = random.nextInt(messages.size)
-        val senderIndex = random.nextInt(senders.size)
-        val timestamp = "${LocalDateTime.now().hour}:${LocalDateTime.now().minute}"
-        chat.add(Message(messages[messageIndex], senders[senderIndex], timestamp))
+    var textToDisplay by remember {
+        mutableStateOf("")
     }
+
+    LaunchedEffect(
+        key1 = texts,
+    ) {
+        while (textIndex < texts.size) {
+            texts[textIndex].forEachIndexed { charIndex, _ ->
+                textToDisplay = texts[textIndex]
+                    .substring(
+                        startIndex = 0,
+                        endIndex = charIndex + 1,
+                    )
+                delay(100)
+            }
+            textIndex = (textIndex + 1) % texts.size
+            delay(1000)
+        }
+    }
+
+    Text(
+        text = textToDisplay,
+        style = MaterialTheme.typography.bodyLarge,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .padding(16.dp)
+    )
 }
+
+
+
+
