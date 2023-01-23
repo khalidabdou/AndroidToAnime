@@ -13,8 +13,8 @@ class RemoteDataSource @Inject constructor(
     private val wallApi: Api
 ) {
 
-    suspend fun convert(photo: MultipartBody.Part): Response<ResponsePhoto?> {
-        return wallApi.convert(photo)
+    suspend fun free(photo: MultipartBody.Part): Response<ResponsePhoto?> {
+        return wallApi.free(photo)
     }
 
     suspend fun premium(photo: MultipartBody.Part): Response<ResponsePhoto?> {

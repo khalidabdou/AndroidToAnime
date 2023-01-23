@@ -14,8 +14,8 @@ import retrofit2.http.Part
 interface Api {
 
     @Multipart
-    @POST("/upload")
-    suspend fun convert(@Part files: MultipartBody.Part): Response<ResponsePhoto?>
+    @POST("/api/free")
+    suspend fun free(@Part files: MultipartBody.Part): Response<ResponsePhoto?>
 
     @Multipart
     @POST("/api/premium")

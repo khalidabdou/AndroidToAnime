@@ -18,8 +18,8 @@ android {
         applicationId "com.AnimeMagic.ai"
         minSdk 23
         targetSdk 33
-        versionCode 8
-        versionName "8.0"
+        versionCode 10
+        versionName "10.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

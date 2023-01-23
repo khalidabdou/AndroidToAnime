@@ -170,7 +170,7 @@ fun Upload(
                         navController.navigate(NavRoutes.Premium.route)
                     } else {
                         viewModel.readyImage = NetworkResults.Loading()
-                        viewModel.convert(pathImage)
+                        viewModel.convert(pathImage,pricingViewModel.isSubscribe.value)
                     }
 
                     Log.d(AppUtils.TAG_D, "${viewModel.myPhotos.size}")
