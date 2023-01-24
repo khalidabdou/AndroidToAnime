@@ -28,6 +28,7 @@ fun Share(viewModel: MainViewModel, pricingViewModel: PricingViewModel) {
     val myHandler = Handler(Looper.getMainLooper())
     LaunchedEffect(key1 = Unit) {
         viewModel.incrementCount()
+        showInterstitialAfterClick(context, pricingViewModel.isSubscribe.value)
     }
     Column() {
         Box(

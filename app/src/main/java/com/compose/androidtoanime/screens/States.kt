@@ -282,7 +282,7 @@ fun NotYet(
                                 override fun onAdFailedToLoad(adErr: LoadAdError) {
                                     super.onAdFailedToLoad(adErr)
                                     adProgress.value = false
-                                    Toast.makeText(context, "failed", Toast.LENGTH_LONG).show()
+                                    //Toast.makeText(context, "failed", Toast.LENGTH_LONG).show()
                                     convert()
                                 }
 
