@@ -2,6 +2,5 @@ package com.compose.androidtoanime.preferences.abstraction
 
 interface AdsRepository {
 
-    fun loadBannerAdmob()
-    fun showBannerAdmob()
+    fun setBanner(type: String): String
 }

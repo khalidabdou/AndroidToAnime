@@ -20,16 +20,9 @@ import com.compose.androidtoanime.RepositoryImpl
 import com.compose.androidtoanime.Utils.AppUtils.Companion.bitmap
 import com.compose.androidtoanime.Utils.AppUtils.Companion.generateNewPath
 import com.compose.androidtoanime.Utils.AppUtils.Companion.saveBitmapToFile
+import com.compose.androidtoanime.Utils.HandleAds
 import com.compose.androidtoanime.Utils.HandleResponse
 import com.compose.androidtoanime.Utils.NetworkResults
-import com.compose.androidtoanime.data.AdProvider.Companion.Banner
-import com.compose.androidtoanime.data.AdProvider.Companion.BannerApplovin
-import com.compose.androidtoanime.data.AdProvider.Companion.BannerFAN
-import com.compose.androidtoanime.data.AdProvider.Companion.Inter
-import com.compose.androidtoanime.data.AdProvider.Companion.InterApplovin
-import com.compose.androidtoanime.data.AdProvider.Companion.InterFAN
-import com.compose.androidtoanime.data.AdProvider.Companion.OpenAd
-import com.compose.androidtoanime.data.AdProvider.Companion.Rewarded
 import com.compose.androidtoanime.data.Ads
 import com.compose.androidtoanime.data.ResponsePhoto
 import com.compose.androidtoanime.data.model.Message
@@ -52,7 +45,6 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val repo: RepositoryImpl,
     application: Application
-
 ) : AndroidViewModel(application) {
 
     //local
@@ -115,46 +107,9 @@ class MainViewModel @Inject constructor(
                 Log.d("ads", "err")
             }
             is NetworkResults.Success -> {
-                infos.value.data!!.ads.forEach {
-                    Log.d("FAN", it.ad_id)
-                    when (it.type) {
-                        "banner" -> {
-                            Banner = it
-                            Log.d("ads", Banner.toString())
-                        }
-                        "inter" -> {
-                            Inter = it
-                            Log.d("ads", Inter.toString())
-                        }
-                        "open" -> {
-                            OpenAd = it
-                            Log.d("ads", OpenAd.toString())
-                        }
-                        "rewarded" -> {
-                            Rewarded = it
-                            //Log.d("ads", OpenAd.toString())
-                        }
-                        "banner_fan" -> {
-                            Log.d("FAN", it.ad_id)
-                            BannerFAN = it
-                            //Log.d("ads", Banner.toString())
-                        }
-                        "inter_fan" -> {
-                            InterFAN = it
-                            //Log.d("ads", Inter.toString())
-                        }
-                        "banner_applovin" -> {
-                            Log.d("FAN", it.ad_id)
-                            BannerApplovin = it
-                            //Log.d("ads", Banner.toString())
-                        }
-                        "inter_Applovin" -> {
-                            InterApplovin = it
-                            //Log.d("ads", Inter.toString())
-                        }
-                    }
-                }
+                HandleAds(infos.value.data!!.ads).setAds()
             }
+            else -> {}
         }
     }
 

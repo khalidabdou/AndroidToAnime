@@ -139,7 +139,6 @@ fun Upload(
 
         else -> {
             converting.value = viewModel.readyImage is NetworkResults.Loading
-
             NotYet(
                 context = context,
                 imageUri = imageUri,
@@ -170,7 +169,7 @@ fun Upload(
                         navController.navigate(NavRoutes.Premium.route)
                     } else {
                         viewModel.readyImage = NetworkResults.Loading()
-                        viewModel.convert(pathImage,pricingViewModel.isSubscribe.value)
+                        viewModel.convert(pathImage, pricingViewModel.isSubscribe.value)
                     }
 
                     Log.d(AppUtils.TAG_D, "${viewModel.myPhotos.size}")
@@ -184,7 +183,8 @@ fun Upload(
 @Composable
 fun LoadingAnimation1(
     circleColor: Color = Color.Magenta,
-    animationDelay: Int = 1000
+    animationDelay: Int = 1000,
+    modifier: Modifier = Modifier.size(30.dp)
 ) {
 
     // circle's scale state
@@ -209,8 +209,7 @@ fun LoadingAnimation1(
 
     // animating circle
     Box(
-        modifier = Modifier
-            .size(size = 64.dp)
+        modifier = modifier
             .scale(scale = circleScaleAnimate.value)
             .border(
                 width = 10.dp,

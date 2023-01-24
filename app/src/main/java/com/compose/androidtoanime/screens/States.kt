@@ -12,6 +12,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,6 +27,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.compose.androidtoanime.R
+import com.compose.androidtoanime.Utils.findActivity
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.ringtones.compose.feature.admob.loadRewarded
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -91,7 +98,7 @@ fun NotYet(
             repeatMode = RepeatMode.Reverse
         )
     )
-    val description= context.resources.getStringArray(R.array.home_description)
+    val description = context.resources.getStringArray(R.array.home_description)
 
     Log.d(TAG, "not yet")
     val convertingText = remember { mutableStateOf(context.getString(R.string.ready)) }
@@ -232,6 +239,10 @@ fun NotYet(
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     valueProgress(progress.value)
+                    Text(
+                        text = "Photos will be immediately deleted from our server after the converted",
+                        style = MaterialTheme.typography.labelSmall
+                    )
                 }
             }
 
@@ -261,13 +272,68 @@ fun NotYet(
                         }
                     }
                 } else {
-                    myButton(
-                        modifier = Modifier.offset(y = offsetButton),
-                        stringResource(R.string.convert),
-                        R.drawable.convert
-                    ) {
-                        convert()
+                    var adProgress = remember {
+                        mutableStateOf<Boolean>(false)
                     }
+                    Button(
+                        onClick = {
+                            adProgress.value = true
+                            loadRewarded().load(context, object : RewardedAdLoadCallback() {
+                                override fun onAdFailedToLoad(adErr: LoadAdError) {
+                                    super.onAdFailedToLoad(adErr)
+                                    adProgress.value = false
+                                    Toast.makeText(context, "failed", Toast.LENGTH_LONG).show()
+                                    convert()
+                                }
+
+                                override fun onAdLoaded(ad: RewardedAd) {
+                                    super.onAdLoaded(ad)
+                                    adProgress.value = false
+                                    ad.show(context.findActivity()!!) {
+                                        convert()
+                                    }
+                                    //Toast.makeText(context,"loaded",Toast.LENGTH_LONG).show()
+                                }
+                            })
+                            //convert()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.onBackground,
+                            contentColor = MaterialTheme.colorScheme.background
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .height(60.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                            .offset(y = offsetButton),
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_ad),
+                            contentDescription = null
+                        )
+
+                        Column(modifier = Modifier) {
+                            Text(text = "Convert", style = MaterialTheme.typography.titleMedium)
+                            Text(text = "Watch an Ad", style = MaterialTheme.typography.labelMedium)
+                        }
+
+                        Spacer(modifier = Modifier.weight(1f))
+                        if (adProgress.value) {
+                            LoadingAnimation1()
+                        } else
+                            Icon(
+                                imageVector = Icons.Default.ArrowForward,
+                                contentDescription = null
+                            )
+
+                    }
+//                    myButton(
+//                        modifier = Modifier.offset(y = offsetButton),
+//                        stringResource(R.string.convert),
+//                        R.drawable.convert
+//                    ) {
+//                        convert()
+//                    }
                 }
             }
         }
