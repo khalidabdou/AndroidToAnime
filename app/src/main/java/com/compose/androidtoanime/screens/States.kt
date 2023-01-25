@@ -239,10 +239,18 @@ fun NotYet(
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     valueProgress(progress.value)
-                    Text(
-                        text = "Photos will be immediately deleted from our server after the converted",
-                        style = MaterialTheme.typography.labelSmall
-                    )
+                    Row() {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_lock),
+                            contentDescription = null,
+                            modifier = Modifier
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Photos will be immediately deleted from our server after the converted",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
                 }
             }
 

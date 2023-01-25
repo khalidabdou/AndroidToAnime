@@ -34,6 +34,7 @@ import com.compose.androidtoanime.Utils.NetworkResults
 import com.compose.androidtoanime.viewmodels.MainViewModel
 import com.compose.androidtoanime.viewmodels.PricingViewModel
 import com.wishes.jetpackcompose.admob.loadInterstitial
+import com.wishes.jetpackcompose.admob.showInterstitialAfterClick
 import com.wishes.jetpackcompose.runtime.NavRoutes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -148,6 +149,7 @@ fun Upload(
                 },
                 onSelect = {
                     if (hasStoragePermission(context)) {
+                        showInterstitialAfterClick(context, isSubscribed)
                         imagePicker.launch("image/*")
                     } else {
                         Toast.makeText(

@@ -44,6 +44,7 @@ import com.compose.androidtoanime.Utils.NetworkResults
 import com.compose.androidtoanime.data.model.Message
 import com.compose.androidtoanime.viewmodels.MainViewModel
 import com.compose.androidtoanime.viewmodels.PricingViewModel
+import com.wishes.jetpackcompose.admob.showInterstitialAfterClick
 import com.wishes.jetpackcompose.runtime.NavRoutes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -99,6 +100,8 @@ fun Chat(
                 Message(it.text, it.sender, it.timestamp),
                 context
             )
+            if (currentMessages.size % 3 == 0)
+                showInterstitialAfterClick(context, pricingViewModel.isSubscribe.value)
             //currentMessages.add(Message(it.text, it.sender, it.timestamp))
             coroutineScope.launch {
                 listState.animateScrollToItem(currentMessages.size - 1)

@@ -1,9 +1,12 @@
 package com.compose.androidtoanime.screens
 
+import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -15,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.compose.androidtoanime.R
+import com.compose.androidtoanime.Utils.Connexion
 import com.compose.androidtoanime.Utils.NetworkResults
 import com.compose.androidtoanime.Utils.animateVisibility
 import com.compose.androidtoanime.viewmodels.MainViewModel
@@ -29,8 +33,14 @@ fun Splash(
     viewModel: MainViewModel,
     pricingViewModel: PricingViewModel
 ) {
+
+    var isOnline = remember {
+        mutableStateOf(false)
+    }
     val context = LocalContext.current
+    val connexion = Connexion()
     var startAnimation by remember { mutableStateOf(false) }
+
 
     val alphaAnim = animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0f,
@@ -44,8 +54,28 @@ fun Splash(
     }
 
 
+    isOnline.value = connexion.isOnline(context)
+    if (!isOnline.value) {
 
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(painter = painterResource(id = R.drawable.no_wifi), contentDescription = "no_wifi")
+            Text(text = "No Internet Connexion")
+            Spacer(modifier = Modifier.height(6.dp))
+            Button(onClick = {
+                isOnline.value = connexion.isOnline(context)
+                if (!isOnline.value)
+                    Toast.makeText(context, "no internet connexion", Toast.LENGTH_LONG).show()
 
+            }) {
+                Text(text = "Check again")
+            }
+        }
+        return
+    }
     if (viewModel.infos.value is NetworkResults.Loading) {
         viewModel.getAds()
     } else if (viewModel.infos.value is NetworkResults.Error) {
@@ -97,4 +127,6 @@ fun MSplash(alpha: Float) {
         )
     }
 }
+
+
 
